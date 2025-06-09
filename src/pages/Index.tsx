@@ -1,21 +1,27 @@
 
+import Header from "@/components/Header";
 import Hero from "@/components/Hero";
-import About from "@/components/About";
-import Services from "@/components/Services";
-import Portfolio from "@/components/Portfolio";
-import Testimonials from "@/components/Testimonials";
-import Contact from "@/components/Contact";
+import FeaturedNews from "@/components/FeaturedNews";
+import NewsGrid from "@/components/NewsGrid";
+import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
 
 const Index = () => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white text-slate-900">
+      <Header />
       <Hero />
-      <About />
-      <Services />
-      <Portfolio />
-      <Testimonials />
-      <Contact />
+      <FeaturedNews />
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2">
+            <NewsGrid />
+          </div>
+          <div className="lg:col-span-1">
+            <Sidebar />
+          </div>
+        </div>
+      </div>
       <Footer />
     </div>
   );

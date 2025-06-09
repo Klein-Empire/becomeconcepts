@@ -1,42 +1,46 @@
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Hero = () => {
-  const scrollToPortfolio = () => {
-    document.getElementById('portfolio')?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 px-4">
-      <div className="max-w-4xl mx-auto text-center animate-fade-in">
-        <div className="mb-8">
-          <h1 className="text-5xl md:text-7xl font-bold text-slate-800 mb-6 leading-tight">
-            Hello, I'm{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Alex Johnson
-            </span>
-          </h1>
-          <p className="text-xl md:text-2xl text-slate-600 font-light max-w-3xl mx-auto">
-            Designing smart websites & solving real IT problems.
-          </p>
+    <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <div className="flex items-center space-x-2 text-blue-200 mb-4">
+              <span className="bg-red-500 text-white px-2 py-1 text-xs font-bold rounded">BREAKING</span>
+              <div className="flex items-center space-x-1">
+                <Clock className="h-4 w-4" />
+                <span className="text-sm">2 hours ago</span>
+              </div>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+              Major Technology Breakthrough Changes Industry Standards
+            </h1>
+            <p className="text-xl text-blue-100 mb-8 leading-relaxed">
+              Industry experts predict revolutionary changes as new technology promises to reshape how we interact with digital platforms worldwide.
+            </p>
+            <Button 
+              size="lg"
+              className="bg-white text-blue-600 hover:bg-blue-50 font-semibold"
+            >
+              Read Full Story
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </div>
+          
+          <div className="relative">
+            <img
+              src="/placeholder.svg"
+              alt="Breaking news"
+              className="w-full h-80 object-cover rounded-lg shadow-2xl"
+            />
+            <div className="absolute bottom-4 left-4 right-4 bg-black bg-opacity-50 text-white p-4 rounded">
+              <p className="text-sm font-medium">Technology • Business</p>
+            </div>
+          </div>
         </div>
-        
-        <div className="mb-12">
-          <p className="text-lg text-slate-700 max-w-2xl mx-auto leading-relaxed">
-            Passionate IT professional with expertise in web design, development, and comprehensive IT solutions. 
-            I transform ideas into digital experiences and tackle complex technical challenges.
-          </p>
-        </div>
-
-        <Button 
-          onClick={scrollToPortfolio}
-          size="lg"
-          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-6 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-        >
-          View My Work
-          <ArrowRight className="ml-2 h-5 w-5" />
-        </Button>
       </div>
     </section>
   );
