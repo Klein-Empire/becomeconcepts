@@ -1,40 +1,43 @@
 
 import { TrendingUp, Mail, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Sidebar = () => {
   const trendingStories = [
     {
-      id: 1,
+      id: 11,
       title: "Breaking: Major Policy Changes Announced",
       category: "Politics",
       time: "30 min ago"
     },
     {
-      id: 2,
+      id: 12,
       title: "Tech Giant Reports Record Profits",
       category: "Business",
       time: "1 hour ago"
     },
     {
-      id: 3,
+      id: 13,
       title: "Celebrity Wedding Shocks Fans",
       category: "Entertainment",
       time: "2 hours ago"
     },
     {
-      id: 4,
+      id: 14,
       title: "Scientific Breakthrough in Medicine",
       category: "Health",
       time: "3 hours ago"
     },
     {
-      id: 5,
+      id: 15,
       title: "Championship Team Wins Title",
       category: "Sports",
       time: "4 hours ago"
     }
   ];
+
+  const quickLinks = ["Weather", "Stock Market", "Election Updates", "COVID-19 Updates", "Opinion"];
 
   return (
     <aside className="space-y-8">
@@ -50,11 +53,15 @@ const Sidebar = () => {
               <div className="flex items-start space-x-3">
                 <span className="text-red-500 font-bold text-lg">{index + 1}</span>
                 <div className="flex-1">
-                  <h4 className="text-sm font-medium text-slate-900 mb-1 hover:text-blue-600 cursor-pointer line-clamp-2">
-                    {story.title}
-                  </h4>
+                  <Link to={`/article/${story.id}`}>
+                    <h4 className="text-sm font-medium text-slate-900 mb-1 hover:text-blue-600 cursor-pointer line-clamp-2">
+                      {story.title}
+                    </h4>
+                  </Link>
                   <div className="flex items-center space-x-2 text-xs text-slate-500">
-                    <span>{story.category}</span>
+                    <Link to={`/category/${story.category.toLowerCase()}`}>
+                      <span className="hover:text-blue-600">{story.category}</span>
+                    </Link>
                     <span>•</span>
                     <span>{story.time}</span>
                   </div>
@@ -102,15 +109,15 @@ const Sidebar = () => {
       <div className="bg-white rounded-lg shadow-md p-6">
         <h3 className="text-lg font-bold text-slate-900 mb-4">Quick Links</h3>
         <div className="space-y-3">
-          {["Weather", "Stock Market", "Election Updates", "COVID-19 Updates", "Opinion"].map((link) => (
-            <a
+          {quickLinks.map((link) => (
+            <Link
               key={link}
-              href="#"
+              to={`/category/${link.toLowerCase().replace(/\s+/g, '-')}`}
               className="flex items-center justify-between text-slate-700 hover:text-blue-600 text-sm"
             >
               <span>{link}</span>
               <ExternalLink className="h-3 w-3" />
-            </a>
+            </Link>
           ))}
         </div>
       </div>

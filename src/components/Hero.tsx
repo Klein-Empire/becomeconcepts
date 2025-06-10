@@ -1,6 +1,7 @@
 
 import { ArrowRight, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
@@ -21,13 +22,15 @@ const Hero = () => {
             <p className="text-xl text-blue-100 mb-8 leading-relaxed">
               Industry experts predict revolutionary changes as new technology promises to reshape how we interact with digital platforms worldwide.
             </p>
-            <Button 
-              size="lg"
-              className="bg-white text-blue-600 hover:bg-blue-50 font-semibold"
-            >
-              Read Full Story
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
+            <Link to="/article/1">
+              <Button 
+                size="lg"
+                className="bg-white text-blue-600 hover:bg-blue-50 font-semibold"
+              >
+                Read Full Story
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
           </div>
           
           <div className="relative">
