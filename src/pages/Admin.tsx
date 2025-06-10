@@ -135,7 +135,6 @@ const Admin = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Simple authentication - in real app, this would be secure
     if (loginForm.username === "admin" && loginForm.password === "admin123") {
       setIsAuthenticated(true);
       setLoginError("");
@@ -643,7 +642,6 @@ const Admin = () => {
           </TabsContent>
         </Tabs>
 
-        {/* Article Dialog */}
         <Dialog open={isArticleDialogOpen} onOpenChange={setIsArticleDialogOpen}>
           <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
@@ -811,7 +809,6 @@ const Admin = () => {
           </DialogContent>
         </Dialog>
 
-        {/* Crawl News Dialog */}
         <Dialog open={isCrawlDialogOpen} onOpenChange={setIsCrawlDialogOpen}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
@@ -866,7 +863,6 @@ const Admin = () => {
           </DialogContent>
         </Dialog>
 
-        {/* Advertisement Dialog */}
         <Dialog open={isAdDialogOpen} onOpenChange={setIsAdDialogOpen}>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
@@ -1005,5 +1001,3 @@ const Admin = () => {
 };
 
 export default Admin;
-
-}
