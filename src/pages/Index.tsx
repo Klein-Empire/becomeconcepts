@@ -1,5 +1,6 @@
 
 import Header from "@/components/Header";
+import NewsCrawl from "@/components/NewsCrawl";
 import Hero from "@/components/Hero";
 import FeaturedNews from "@/components/FeaturedNews";
 import NewsGrid from "@/components/NewsGrid";
@@ -10,6 +11,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <Header />
+      <NewsCrawl />
       <Hero />
       <FeaturedNews />
       <div className="max-w-7xl mx-auto px-4 py-8">

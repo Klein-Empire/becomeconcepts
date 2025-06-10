@@ -9,7 +9,7 @@ const NewsGrid = () => {
       title: "Space Exploration Reaches New Milestone",
       excerpt: "Private space companies achieve breakthrough in sustainable rocket technology, reducing costs by 40%.",
       category: "Tech",
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?w=400&h=300&fit=crop",
       time: "1 hour ago",
       author: "Alex Thompson",
       comments: 24
@@ -19,7 +19,7 @@ const NewsGrid = () => {
       title: "Economic Growth Accelerates in Q4",
       excerpt: "Latest quarterly reports show unprecedented growth across multiple sectors, exceeding economist predictions.",
       category: "Business",
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=400&h=300&fit=crop",
       time: "2 hours ago",
       author: "Maria Garcia",
       comments: 18
@@ -29,7 +29,7 @@ const NewsGrid = () => {
       title: "Championship Finals Draw Record Viewership",
       excerpt: "Sports broadcasting history made as global audience surpasses all previous records for live streaming.",
       category: "Sports",
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1500673922987-e212871fec22?w=400&h=300&fit=crop",
       time: "4 hours ago",
       author: "David Kim",
       comments: 56
@@ -39,7 +39,7 @@ const NewsGrid = () => {
       title: "Healthcare Innovation Saves Lives",
       excerpt: "New medical device approved for emergency use, promising to revolutionize emergency medicine protocols.",
       category: "Health",
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=300&fit=crop",
       time: "6 hours ago",
       author: "Dr. Lisa Wang",
       comments: 12
@@ -49,7 +49,7 @@ const NewsGrid = () => {
       title: "Entertainment Industry Embraces Virtual Reality",
       excerpt: "Major studios announce massive investments in VR content creation, signaling industry transformation.",
       category: "Entertainment",
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=400&h=300&fit=crop",
       time: "8 hours ago",
       author: "Chris Brown",
       comments: 33
@@ -59,7 +59,7 @@ const NewsGrid = () => {
       title: "Political Reform Bill Passes Legislature",
       excerpt: "Landmark legislation addressing voting rights and election security receives bipartisan support.",
       category: "Politics",
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=300&fit=crop",
       time: "10 hours ago",
       author: "Jennifer Adams",
       comments: 89
@@ -68,55 +68,67 @@ const NewsGrid = () => {
 
   return (
     <section>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-slate-900">Latest News</h2>
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-900 to-purple-900 bg-clip-text text-transparent mb-2">
+            Latest News
+          </h2>
+          <div className="h-1 w-20 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full"></div>
+        </div>
         <div className="flex space-x-2">
-          <button className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm">Grid</button>
-          <button className="px-3 py-1 bg-slate-200 text-slate-700 rounded-md text-sm hover:bg-slate-300">List</button>
+          <button className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg text-sm font-semibold shadow-lg">
+            Grid
+          </button>
+          <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold hover:bg-gray-300 transition-colors">
+            List
+          </button>
         </div>
       </div>
       
       <div className="space-y-8">
         {articles.map((article) => (
-          <article key={article.id} className="border-b border-slate-200 pb-8 last:border-b-0">
+          <article key={article.id} className="border-b border-gray-200 pb-8 last:border-b-0 group">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="md:col-span-1">
                 <Link to={`/article/${article.id}`}>
-                  <img
-                    src={article.image}
-                    alt={article.title}
-                    className="w-full h-48 md:h-32 object-cover rounded-lg hover:opacity-90 transition-opacity"
-                  />
+                  <div className="relative overflow-hidden rounded-xl shadow-lg">
+                    <img
+                      src={article.image}
+                      alt={article.title}
+                      className="w-full h-48 md:h-40 object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  </div>
                 </Link>
               </div>
               <div className="md:col-span-2">
-                <div className="flex items-center space-x-3 mb-2">
+                <div className="flex items-center space-x-3 mb-3">
                   <Link to={`/category/${article.category.toLowerCase()}`}>
-                    <span className="bg-slate-100 text-slate-700 text-xs font-medium px-2 py-1 rounded hover:bg-slate-200">
+                    <span className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-xs font-bold px-3 py-1 rounded-full hover:from-indigo-600 hover:to-purple-600 transition-colors">
                       {article.category}
                     </span>
                   </Link>
-                  <div className="flex items-center text-slate-500 text-sm">
-                    <Clock className="h-3 w-3 mr-1" />
+                  <div className="flex items-center text-gray-500 text-sm">
+                    <Clock className="h-4 w-4 mr-1" />
                     {article.time}
                   </div>
                 </div>
                 <Link to={`/article/${article.id}`}>
-                  <h3 className="text-xl font-bold text-slate-900 mb-2 hover:text-blue-600 cursor-pointer transition-colors">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-indigo-600 cursor-pointer transition-colors duration-300 leading-tight">
                     {article.title}
                   </h3>
                 </Link>
-                <p className="text-slate-600 mb-3 line-clamp-2">
+                <p className="text-gray-600 mb-4 line-clamp-2 leading-relaxed">
                   {article.excerpt}
                 </p>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-500">By {article.author}</span>
-                  <div className="flex items-center space-x-4 text-slate-500">
-                    <button className="flex items-center space-x-1 hover:text-blue-600">
+                  <span className="text-sm text-gray-500 font-medium">By {article.author}</span>
+                  <div className="flex items-center space-x-4 text-gray-500">
+                    <button className="flex items-center space-x-1 hover:text-indigo-600 transition-colors">
                       <MessageSquare className="h-4 w-4" />
-                      <span className="text-sm">{article.comments}</span>
+                      <span className="text-sm font-medium">{article.comments}</span>
                     </button>
-                    <button className="hover:text-blue-600">
+                    <button className="hover:text-indigo-600 transition-colors">
                       <Share2 className="h-4 w-4" />
                     </button>
                   </div>
