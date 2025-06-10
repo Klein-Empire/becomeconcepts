@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  // In a real app, this would come from a proper auth context
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
 
   const categories = [
     "Politics", "Business", "Tech", "Sports", "Entertainment", "Health", "World"
@@ -41,13 +43,16 @@ const Header = () => {
             >
               Subscribe
             </Button>
-            <Link to="/admin">
-              <Button 
-                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold px-6 py-2 rounded-xl shadow-lg transition-all duration-300"
-              >
-                Admin Panel
-              </Button>
-            </Link>
+            {/* Only show admin link if user types the secret admin URL or is authenticated */}
+            {(window.location.pathname === '/admin' || isAdminAuthenticated) && (
+              <Link to="/admin">
+                <Button 
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold px-6 py-2 rounded-xl shadow-lg transition-all duration-300"
+                >
+                  Admin Panel
+                </Button>
+              </Link>
+            )}
           </div>
 
           <button
@@ -99,9 +104,11 @@ const Header = () => {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
                 />
                 <Button variant="outline" className="w-full border-indigo-600 text-indigo-600">Subscribe</Button>
-                <Link to="/admin">
-                  <Button className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white">Admin Panel</Button>
-                </Link>
+                {(window.location.pathname === '/admin' || isAdminAuthenticated) && (
+                  <Link to="/admin">
+                    <Button className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white">Admin Panel</Button>
+                  </Link>
+                )}
               </div>
             </div>
           </div>

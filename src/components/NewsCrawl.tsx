@@ -4,22 +4,28 @@ import { useState, useEffect } from "react";
 const NewsCrawl = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   
-  const crawlNews = [
+  // In a real app, this would come from a global state management system or API
+  const [crawlNews] = useState([
     "Stock markets hit record highs as tech sector surges 15%",
     "Breaking: International climate agreement signed by 50 nations",
     "Scientists discover breakthrough cancer treatment with 95% success rate",
-    "Major cryptocurrency exchange announces new regulatory compliance measures",
     "Global supply chain issues show signs of improvement in Q4",
     "Revolutionary AI technology promises to transform healthcare industry"
-  ];
+  ]);
 
   useEffect(() => {
+    if (crawlNews.length === 0) return;
+    
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % crawlNews.length);
     }, 4000);
 
     return () => clearInterval(interval);
   }, [crawlNews.length]);
+
+  if (crawlNews.length === 0) {
+    return null;
+  }
 
   return (
     <div className="bg-gradient-to-r from-red-600 via-red-700 to-red-800 text-white py-2 overflow-hidden shadow-lg">
