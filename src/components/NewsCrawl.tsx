@@ -6,11 +6,26 @@ const NewsCrawl = () => {
   
   // In a real app, this would come from a global state management system or API
   const [crawlNews] = useState([
-    "Stock markets hit record highs as tech sector surges 15%",
-    "Breaking: International climate agreement signed by 50 nations",
-    "Scientists discover breakthrough cancer treatment with 95% success rate",
-    "Global supply chain issues show signs of improvement in Q4",
-    "Revolutionary AI technology promises to transform healthcare industry"
+    {
+      text: "Stock markets hit record highs as tech sector surges 15%",
+      image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=50&h=50&fit=crop&crop=face"
+    },
+    {
+      text: "Breaking: International climate agreement signed by 50 nations",
+      image: "https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=50&h=50&fit=crop&crop=face"
+    },
+    {
+      text: "Scientists discover breakthrough cancer treatment with 95% success rate",
+      image: "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=50&h=50&fit=crop&crop=face"
+    },
+    {
+      text: "Global supply chain issues show signs of improvement in Q4",
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face"
+    },
+    {
+      text: "Revolutionary AI technology promises to transform healthcare industry",
+      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=50&h=50&fit=crop&crop=face"
+    }
   ]);
 
   useEffect(() => {
@@ -28,20 +43,25 @@ const NewsCrawl = () => {
   }
 
   return (
-    <div className="bg-gradient-to-r from-red-600 via-red-700 to-red-800 text-white py-2 overflow-hidden shadow-lg">
+    <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white py-3 overflow-hidden shadow-lg">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center">
-          <div className="bg-white text-red-600 px-3 py-1 text-xs font-bold rounded mr-4 animate-pulse">
+          <div className="bg-white text-purple-600 px-3 py-1 text-xs font-bold rounded mr-4 animate-pulse">
             LIVE
           </div>
-          <div className="flex-1 relative h-6 overflow-hidden">
+          <div className="flex-1 relative h-8 overflow-hidden">
             <div 
               className="absolute inset-0 flex items-center transition-transform duration-1000 ease-in-out"
               style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
               {crawlNews.map((news, index) => (
-                <div key={index} className="w-full flex-shrink-0 text-sm font-medium">
-                  {news}
+                <div key={index} className="w-full flex-shrink-0 flex items-center space-x-3">
+                  <img
+                    src={news.image}
+                    alt="News"
+                    className="w-8 h-8 rounded-full object-cover border-2 border-white shadow-md"
+                  />
+                  <span className="text-sm font-medium">{news.text}</span>
                 </div>
               ))}
             </div>
