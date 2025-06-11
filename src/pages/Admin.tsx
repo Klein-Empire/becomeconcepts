@@ -16,6 +16,17 @@ interface Article {
   time: string;
   images: string[];
   content: string;
+  isActive: boolean;
+  interactions: {
+    views: number;
+    likes: number;
+    comments: Array<{
+      id: number;
+      author: string;
+      content: string;
+      timestamp: string;
+    }>;
+  };
 }
 interface CrawlNews {
   id: number;
@@ -119,6 +130,58 @@ const Admin = () => {
   });
   const [isAccountDialogOpen, setIsAccountDialogOpen] = useState(false);
 
+  // Enhanced articles with interactions
+  const [articles, setArticles] = useState<Article[]>([
+    {
+      id: 1,
+      title: "Major Technology Breakthrough Changes Industry Standards",
+      excerpt: "Industry experts predict revolutionary changes as new technology promises to reshape how we interact with digital platforms worldwide.",
+      category: "Technology",
+      author: "Michael Chen",
+      time: new Date().toISOString(),
+      images: ["https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=300&fit=crop"],
+      content: "Full article content here...",
+      isActive: true,
+      interactions: {
+        views: 1250,
+        likes: 45,
+        comments: []
+      }
+    },
+    {
+      id: 2,
+      title: "Global Markets Show Strong Recovery Signs",
+      excerpt: "Financial analysts report positive trends across major exchanges as investor confidence returns.",
+      category: "Business",
+      author: "Sarah Johnson",
+      time: new Date(Date.now() - 180000).toISOString(),
+      images: ["https://images.unsplash.com/photo-1501854140801-50d01698950b?w=400&h=300&fit=crop"],
+      content: "Full article content here...",
+      isActive: true,
+      interactions: {
+        views: 890,
+        likes: 32,
+        comments: []
+      }
+    },
+    {
+      id: 3,
+      title: "Political Reform Bills Pass Through Senate",
+      excerpt: "Historic legislation addressing key policy reforms receives bipartisan support in recent vote.",
+      category: "Politics",
+      author: "David Wilson",
+      time: new Date(Date.now() - 300000).toISOString(),
+      images: ["https://images.unsplash.com/photo-1466442929976-97f336a657be?w=400&h=300&fit=crop"],
+      content: "Full article content here...",
+      isActive: true,
+      interactions: {
+        views: 2100,
+        likes: 67,
+        comments: []
+      }
+    }
+  ]);
+
   // Enhanced data with interactions
   const [crawlNews, setCrawlNews] = useState<CrawlNews[]>([{
     id: 1,
@@ -190,14 +253,25 @@ const Admin = () => {
   }]);
 
   // Dialog states
+  const [editingArticle, setEditingArticle] = useState<Article | null>(null);
   const [editingCrawl, setEditingCrawl] = useState<CrawlNews | null>(null);
   const [editingPublication, setEditingPublication] = useState<Publication | null>(null);
   const [editingTeaching, setEditingTeaching] = useState<Teaching | null>(null);
+  const [isArticleDialogOpen, setIsArticleDialogOpen] = useState(false);
   const [isCrawlDialogOpen, setIsCrawlDialogOpen] = useState(false);
   const [isPublicationDialogOpen, setIsPublicationDialogOpen] = useState(false);
   const [isTeachingDialogOpen, setIsTeachingDialogOpen] = useState(false);
 
   // Form data states
+  const [articleFormData, setArticleFormData] = useState({
+    title: "",
+    excerpt: "",
+    category: "",
+    author: "",
+    content: "",
+    images: null as File | null,
+    isActive: true
+  });
   const [crawlFormData, setCrawlFormData] = useState({
     text: "",
     image: null as File | null,
@@ -227,6 +301,8 @@ const Admin = () => {
     level: "Beginner" as 'Beginner' | 'Intermediate' | 'Advanced',
     isActive: true
   });
+
+  const categories = ["Technology", "Business", "Politics", "Sports", "Entertainment", "Health", "World"];
 
   // Account management handlers
   const handleEditAccount = () => {
@@ -277,6 +353,83 @@ const Admin = () => {
   // File upload simulation (in real app, this would upload to server)
   const simulateFileUpload = (file: File): string => {
     return `/uploads/${Date.now()}_${file.name}`;
+  };
+
+  // Article handlers
+  const handleEditArticle = (article: Article) => {
+    setEditingArticle(article);
+    setArticleFormData({
+      title: article.title,
+      excerpt: article.excerpt,
+      category: article.category,
+      author: article.author,
+      content: article.content,
+      images: null,
+      isActive: article.isActive
+    });
+    setIsArticleDialogOpen(true);
+  };
+
+  const handleSaveArticle = () => {
+    const imageUrl = articleFormData.images ? simulateFileUpload(articleFormData.images) : editingArticle?.images[0];
+    
+    if (editingArticle) {
+      setArticles(articles.map(article => 
+        article.id === editingArticle.id 
+          ? { 
+              ...article, 
+              ...articleFormData, 
+              images: imageUrl ? [imageUrl] : article.images,
+              time: new Date().toISOString()
+            }
+          : article
+      ));
+    } else {
+      const newArticle: Article = {
+        id: Math.max(...articles.map(a => a.id)) + 1,
+        ...articleFormData,
+        images: imageUrl ? [imageUrl] : [],
+        time: new Date().toISOString(),
+        interactions: {
+          views: 0,
+          likes: 0,
+          comments: []
+        }
+      };
+      setArticles([...articles, newArticle]);
+    }
+    resetArticleForm();
+  };
+
+  const resetArticleForm = () => {
+    setEditingArticle(null);
+    setArticleFormData({
+      title: "",
+      excerpt: "",
+      category: "",
+      author: "",
+      content: "",
+      images: null,
+      isActive: true
+    });
+    setIsArticleDialogOpen(false);
+  };
+
+  const handleDeleteArticle = (id: number) => {
+    setArticles(articles.filter(article => article.id !== id));
+  };
+
+  const toggleArticleStatus = (id: number) => {
+    setArticles(articles.map(article => 
+      article.id === id ? { ...article, isActive: !article.isActive } : article
+    ));
+  };
+
+  const updateArticleInteractions = (articleId: number, interactions: any) => {
+    setArticles(articles.map(article => article.id === articleId ? {
+      ...article,
+      interactions
+    } : article));
   };
 
   // Enhanced CRUD handlers for Publications
@@ -559,8 +712,11 @@ const Admin = () => {
           </div>
         </div>
 
-        <Tabs defaultValue="crawl" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 bg-white rounded-xl shadow-lg">
+        <Tabs defaultValue="articles" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-5 bg-white rounded-xl shadow-lg">
+            <TabsTrigger value="articles" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-600 data-[state=active]:to-purple-600 data-[state=active]:text-white">
+              Articles
+            </TabsTrigger>
             <TabsTrigger value="crawl" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-600 data-[state=active]:to-purple-600 data-[state=active]:text-white">
               News Crawl
             </TabsTrigger>
@@ -571,6 +727,89 @@ const Admin = () => {
               Teaching
             </TabsTrigger>
           </TabsList>
+
+          {/* Articles Tab */}
+          <TabsContent value="articles" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-gray-900">Manage Articles</h2>
+              <Button onClick={() => setIsArticleDialogOpen(true)} className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg">
+                <Plus className="h-5 w-5 mr-2" />
+                Add Article
+              </Button>
+            </div>
+
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
+              <div className="space-y-6 p-6">
+                {articles.map((article) => (
+                  <div key={article.id} className="border border-gray-200 rounded-xl p-6 hover:bg-gray-50">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center space-x-4 flex-1">
+                        <button
+                          onClick={() => toggleArticleStatus(article.id)}
+                          className={`p-2 rounded-lg transition-colors ${
+                            article.isActive 
+                              ? 'bg-green-100 text-green-600 hover:bg-green-200' 
+                              : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
+                          }`}
+                        >
+                          {article.isActive ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                        </button>
+                        
+                        {article.images[0] && (
+                          <img 
+                            src={article.images[0]} 
+                            alt={article.title} 
+                            className="w-16 h-12 object-cover rounded-lg" 
+                          />
+                        )}
+                        
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <h3 className={`font-semibold ${article.isActive ? 'text-gray-900' : 'text-gray-500'}`}>
+                              {article.title}
+                            </h3>
+                            <span className="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded">
+                              {article.category}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-600 mb-1">{article.excerpt}</p>
+                          <p className="text-xs text-gray-500">
+                            By {article.author} | <TimeAgo timestamp={article.time} /> | {article.isActive ? 'Active' : 'Inactive'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditArticle(article)}
+                          className="border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeleteArticle(article.id)}
+                          className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <InteractionTracker 
+                      itemId={article.id} 
+                      itemType="article" 
+                      interactions={article.interactions} 
+                      onUpdateInteractions={(interactions) => updateArticleInteractions(article.id, interactions)}
+                      isAdmin={true}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </TabsContent>
 
           {/* Enhanced News Crawl Tab */}
           <TabsContent value="crawl" className="space-y-6">
@@ -799,6 +1038,118 @@ const Admin = () => {
                 <Button onClick={handleSaveAccount} className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-2 rounded-xl shadow-lg">
                   <Save className="h-4 w-4 mr-2" />
                   Save Changes
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Article Dialog */}
+        <Dialog open={isArticleDialogOpen} onOpenChange={setIsArticleDialogOpen}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-indigo-900 to-purple-900 bg-clip-text text-transparent">
+                {editingArticle ? "Edit Article" : "Add New Article"}
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Title</label>
+                  <input
+                    type="text"
+                    value={articleFormData.title}
+                    onChange={(e) => setArticleFormData({...articleFormData, title: e.target.value})}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+                    placeholder="Enter article title"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Category</label>
+                  <select
+                    value={articleFormData.category}
+                    onChange={(e) => setArticleFormData({...articleFormData, category: e.target.value})}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+                  >
+                    <option value="">Select category</option>
+                    {categories.map((category) => (
+                      <option key={category} value={category}>{category}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Author</label>
+                <input
+                  type="text"
+                  value={articleFormData.author}
+                  onChange={(e) => setArticleFormData({...articleFormData, author: e.target.value})}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+                  placeholder="Enter author name"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Excerpt</label>
+                <Textarea
+                  value={articleFormData.excerpt}
+                  onChange={(e) => setArticleFormData({...articleFormData, excerpt: e.target.value})}
+                  placeholder="Brief article excerpt"
+                  rows={3}
+                  className="rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+                />
+              </div>
+
+              <FileUpload
+                label="Article Image"
+                accept="image/*"
+                type="image"
+                preview={editingArticle?.images[0]}
+                onFileSelect={(file) => setArticleFormData({...articleFormData, images: file})}
+              />
+              
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Content</label>
+                <Textarea
+                  value={articleFormData.content}
+                  onChange={(e) => setArticleFormData({...articleFormData, content: e.target.value})}
+                  placeholder="Full article content"
+                  rows={8}
+                  className="rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+                />
+              </div>
+              
+              <div className="flex items-center space-x-3">
+                <input
+                  type="checkbox"
+                  id="articleActive"
+                  checked={articleFormData.isActive}
+                  onChange={(e) => setArticleFormData({...articleFormData, isActive: e.target.checked})}
+                  className="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500"
+                />
+                <label htmlFor="articleActive" className="text-sm font-medium text-gray-700">
+                  Active (visible on website)
+                </label>
+              </div>
+              
+              <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                <Button 
+                  variant="outline" 
+                  onClick={resetArticleForm}
+                  className="border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-2 rounded-xl"
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={handleSaveArticle}
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-2 rounded-xl shadow-lg"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  {editingArticle ? "Update" : "Create"} Article
                 </Button>
               </div>
             </div>
