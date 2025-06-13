@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -21,8 +22,8 @@ const Admin = () => {
       views: 1245,
       likes: 89,
       comments: [
-        { id: 1, author: "John Doe", content: "This is a game changer!", time: "2023-06-15 14:30" },
-        { id: 2, author: "Jane Smith", content: "I'm not sure about this...", time: "2023-06-15 15:45" }
+        { id: 1, author: "John Doe", content: "This is a game changer!", timestamp: "2023-06-15 14:30" },
+        { id: 2, author: "Jane Smith", content: "I'm not sure about this...", timestamp: "2023-06-15 15:45" }
       ]
     },
     {
@@ -34,7 +35,7 @@ const Admin = () => {
       views: 982,
       likes: 76,
       comments: [
-        { id: 3, author: "Robert Johnson", content: "Amazing progress!", time: "2023-06-14 10:15" }
+        { id: 3, author: "Robert Johnson", content: "Amazing progress!", timestamp: "2023-06-14 10:15" }
       ]
     }
   ]);
@@ -51,7 +52,7 @@ const Admin = () => {
       views: 756,
       likes: 42,
       comments: [
-        { id: 1, author: "Michael Brown", content: "Great insights!", time: "2023-06-11 09:20" }
+        { id: 1, author: "Michael Brown", content: "Great insights!", timestamp: "2023-06-11 09:20" }
       ]
     },
     {
@@ -86,7 +87,7 @@ const Admin = () => {
       views: 289,
       likes: 18,
       comments: [
-        { id: 1, author: "Sarah Johnson", content: "This is much needed!", time: "2023-06-14 16:30" }
+        { id: 1, author: "Sarah Johnson", content: "This is much needed!", timestamp: "2023-06-14 16:30" }
       ]
     }
   ]);
@@ -114,7 +115,7 @@ const Admin = () => {
       views: 528,
       likes: 45,
       comments: [
-        { id: 1, author: "David Wilson", content: "Crucial research!", time: "2023-01-15 11:20" }
+        { id: 1, author: "David Wilson", content: "Crucial research!", timestamp: "2023-01-15 11:20" }
       ]
     }
   ]);
@@ -131,7 +132,7 @@ const Admin = () => {
       views: 678,
       likes: 52,
       comments: [
-        { id: 1, author: "Student123", content: "Great course structure!", time: "2023-05-20 14:15" }
+        { id: 1, author: "Student123", content: "Great course structure!", timestamp: "2023-05-20 14:15" }
       ]
     },
     {
@@ -159,7 +160,7 @@ const Admin = () => {
       views: 1245,
       likes: 98,
       comments: [
-        { id: 1, author: "InvestorPro", content: "Very insightful analysis!", time: "2023-06-02 10:30" }
+        { id: 1, author: "InvestorPro", content: "Very insightful analysis!", timestamp: "2023-06-02 10:30" }
       ]
     },
     {
@@ -186,7 +187,7 @@ const Admin = () => {
       views: 876,
       likes: 64,
       comments: [
-        { id: 1, author: "FarmerJoe", content: "These methods have worked well for me!", time: "2023-05-21 09:45" }
+        { id: 1, author: "FarmerJoe", content: "These methods have worked well for me!", timestamp: "2023-05-21 09:45" }
       ]
     },
     {
@@ -212,7 +213,7 @@ const Admin = () => {
       views: 645,
       likes: 47,
       comments: [
-        { id: 1, author: "TeacherX", content: "I've implemented some of these methods with great results!", time: "2023-05-11 14:20" }
+        { id: 1, author: "TeacherX", content: "I've implemented some of these methods with great results!", timestamp: "2023-05-11 14:20" }
       ]
     },
     {
@@ -246,42 +247,110 @@ const Admin = () => {
     author: "",
     link: "",
     videoUrl: "",
-    description: ""
+    description: "",
+    text: "",
+    authors: "",
+    journal: "",
+    year: "",
+    semester: "",
+    schedule: "",
+    location: "",
+    thumbnail: ""
   });
 
   // Handle Add Item
   const handleAddItem = () => {
-    const newItem = {
+    const baseItem = {
       id: Date.now(),
-      ...formData,
       views: 0,
       likes: 0,
       comments: []
     };
 
+    let newItem;
+
     switch (activeTab) {
       case "trending":
+        newItem = {
+          ...baseItem,
+          title: formData.title,
+          content: formData.content,
+          image: formData.image,
+          date: formData.date
+        };
         setTrendingNews([...trendingNews, newItem]);
         break;
       case "articles":
+        newItem = {
+          ...baseItem,
+          title: formData.title,
+          content: formData.content,
+          author: formData.author,
+          image: formData.image,
+          date: formData.date
+        };
         setArticles([...articles, newItem]);
         break;
       case "news":
+        newItem = {
+          ...baseItem,
+          text: formData.text,
+          link: formData.link,
+          date: formData.date
+        };
         setNewsCrawl([...newsCrawl, newItem]);
         break;
       case "publications":
+        newItem = {
+          ...baseItem,
+          title: formData.title,
+          authors: formData.authors,
+          journal: formData.journal,
+          year: formData.year,
+          link: formData.link
+        };
         setPublications([...publications, newItem]);
         break;
       case "teaching":
+        newItem = {
+          ...baseItem,
+          title: formData.title,
+          description: formData.description,
+          semester: formData.semester,
+          schedule: formData.schedule,
+          location: formData.location
+        };
         setTeaching([...teaching, newItem]);
         break;
       case "become-tv":
+        newItem = {
+          ...baseItem,
+          title: formData.title,
+          description: formData.description,
+          videoUrl: formData.videoUrl,
+          thumbnail: formData.thumbnail,
+          date: formData.date
+        };
         setBecomeTVVideos([...becomeTVVideos, newItem]);
         break;
       case "agricultural":
+        newItem = {
+          ...baseItem,
+          title: formData.title,
+          description: formData.description,
+          image: formData.image,
+          date: formData.date
+        };
         setAgriculturalItems([...agriculturalItems, newItem]);
         break;
       case "education":
+        newItem = {
+          ...baseItem,
+          title: formData.title,
+          description: formData.description,
+          image: formData.image,
+          date: formData.date
+        };
         setEducationItems([...educationItems, newItem]);
         break;
       default:
@@ -294,34 +363,90 @@ const Admin = () => {
 
   // Handle Edit Item
   const handleEditItem = () => {
-    const updatedItem = {
-      ...currentItem,
-      ...formData
-    };
+    let updatedItem;
 
     switch (itemType) {
       case "trending":
+        updatedItem = {
+          ...currentItem,
+          title: formData.title,
+          content: formData.content,
+          image: formData.image,
+          date: formData.date
+        };
         setTrendingNews(trendingNews.map(item => item.id === currentItem.id ? updatedItem : item));
         break;
       case "articles":
+        updatedItem = {
+          ...currentItem,
+          title: formData.title,
+          content: formData.content,
+          author: formData.author,
+          image: formData.image,
+          date: formData.date
+        };
         setArticles(articles.map(item => item.id === currentItem.id ? updatedItem : item));
         break;
       case "news":
+        updatedItem = {
+          ...currentItem,
+          text: formData.text,
+          link: formData.link,
+          date: formData.date
+        };
         setNewsCrawl(newsCrawl.map(item => item.id === currentItem.id ? updatedItem : item));
         break;
       case "publications":
+        updatedItem = {
+          ...currentItem,
+          title: formData.title,
+          authors: formData.authors,
+          journal: formData.journal,
+          year: formData.year,
+          link: formData.link
+        };
         setPublications(publications.map(item => item.id === currentItem.id ? updatedItem : item));
         break;
       case "teaching":
+        updatedItem = {
+          ...currentItem,
+          title: formData.title,
+          description: formData.description,
+          semester: formData.semester,
+          schedule: formData.schedule,
+          location: formData.location
+        };
         setTeaching(teaching.map(item => item.id === currentItem.id ? updatedItem : item));
         break;
       case "become-tv":
+        updatedItem = {
+          ...currentItem,
+          title: formData.title,
+          description: formData.description,
+          videoUrl: formData.videoUrl,
+          thumbnail: formData.thumbnail,
+          date: formData.date
+        };
         setBecomeTVVideos(becomeTVVideos.map(item => item.id === currentItem.id ? updatedItem : item));
         break;
       case "agricultural":
+        updatedItem = {
+          ...currentItem,
+          title: formData.title,
+          description: formData.description,
+          image: formData.image,
+          date: formData.date
+        };
         setAgriculturalItems(agriculturalItems.map(item => item.id === currentItem.id ? updatedItem : item));
         break;
       case "education":
+        updatedItem = {
+          ...currentItem,
+          title: formData.title,
+          description: formData.description,
+          image: formData.image,
+          date: formData.date
+        };
         setEducationItems(educationItems.map(item => item.id === currentItem.id ? updatedItem : item));
         break;
       default:
@@ -378,7 +503,15 @@ const Admin = () => {
       author: item.author || "",
       link: item.link || "",
       videoUrl: item.videoUrl || "",
-      description: item.description || ""
+      description: item.description || "",
+      text: item.text || "",
+      authors: item.authors || "",
+      journal: item.journal || "",
+      year: item.year || "",
+      semester: item.semester || "",
+      schedule: item.schedule || "",
+      location: item.location || "",
+      thumbnail: item.thumbnail || ""
     });
     setIsEditDialogOpen(true);
   };
@@ -400,7 +533,15 @@ const Admin = () => {
       author: "",
       link: "",
       videoUrl: "",
-      description: ""
+      description: "",
+      text: "",
+      authors: "",
+      journal: "",
+      year: "",
+      semester: "",
+      schedule: "",
+      location: "",
+      thumbnail: ""
     });
     setCurrentItem(null);
     setItemType("");
@@ -461,7 +602,6 @@ const Admin = () => {
                 </Button>
               </div>
               
-              {/* Trending News List */}
               <div className="space-y-4">
                 {trendingNews.map((news) => (
                   <div key={news.id} className="border rounded-lg p-4">
@@ -522,7 +662,6 @@ const Admin = () => {
                 </Button>
               </div>
               
-              {/* Articles List */}
               <div className="space-y-4">
                 {articles.map((article) => (
                   <div key={article.id} className="border rounded-lg p-4">
@@ -583,7 +722,6 @@ const Admin = () => {
                 </Button>
               </div>
               
-              {/* News List */}
               <div className="space-y-4">
                 {newsCrawl.map((news) => (
                   <div key={news.id} className="border rounded-lg p-4">
@@ -644,7 +782,6 @@ const Admin = () => {
                 </Button>
               </div>
               
-              {/* Publications List */}
               <div className="space-y-4">
                 {publications.map((pub) => (
                   <div key={pub.id} className="border rounded-lg p-4">
@@ -705,7 +842,6 @@ const Admin = () => {
                 </Button>
               </div>
               
-              {/* Teaching List */}
               <div className="space-y-4">
                 {teaching.map((item) => (
                   <div key={item.id} className="border rounded-lg p-4">
@@ -766,7 +902,6 @@ const Admin = () => {
                 </Button>
               </div>
               
-              {/* Become TV List */}
               <div className="space-y-4">
                 {becomeTVVideos.map((video) => (
                   <div key={video.id} className="border rounded-lg p-4">
@@ -827,7 +962,6 @@ const Admin = () => {
                 </Button>
               </div>
               
-              {/* Agricultural List */}
               <div className="space-y-4">
                 {agriculturalItems.map((item) => (
                   <div key={item.id} className="border rounded-lg p-4">
@@ -888,7 +1022,6 @@ const Admin = () => {
                 </Button>
               </div>
               
-              {/* Education List */}
               <div className="space-y-4">
                 {educationItems.map((item) => (
                   <div key={item.id} className="border rounded-lg p-4">
@@ -968,6 +1101,19 @@ const Admin = () => {
               </div>
             )}
             
+            {itemType === "news" && (
+              <div className="space-y-2">
+                <Label htmlFor="text">News Text</Label>
+                <Textarea
+                  id="text"
+                  name="text"
+                  value={formData.text}
+                  onChange={handleFormChange}
+                  rows={3}
+                />
+              </div>
+            )}
+            
             {(itemType === "become-tv" || itemType === "teaching" || itemType === "agricultural" || itemType === "education") && (
               <div className="space-y-2">
                 <Label htmlFor="description">Description</Label>
@@ -993,6 +1139,70 @@ const Admin = () => {
               </div>
             )}
             
+            {itemType === "publications" && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="authors">Authors</Label>
+                  <Input
+                    id="authors"
+                    name="authors"
+                    value={formData.authors}
+                    onChange={handleFormChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="journal">Journal</Label>
+                  <Input
+                    id="journal"
+                    name="journal"
+                    value={formData.journal}
+                    onChange={handleFormChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="year">Year</Label>
+                  <Input
+                    id="year"
+                    name="year"
+                    value={formData.year}
+                    onChange={handleFormChange}
+                  />
+                </div>
+              </>
+            )}
+            
+            {itemType === "teaching" && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="semester">Semester</Label>
+                  <Input
+                    id="semester"
+                    name="semester"
+                    value={formData.semester}
+                    onChange={handleFormChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="schedule">Schedule</Label>
+                  <Input
+                    id="schedule"
+                    name="schedule"
+                    value={formData.schedule}
+                    onChange={handleFormChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="location">Location</Label>
+                  <Input
+                    id="location"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleFormChange}
+                  />
+                </div>
+              </>
+            )}
+            
             {(itemType === "trending" || itemType === "articles" || itemType === "agricultural" || itemType === "education") && (
               <div className="space-y-2">
                 <Label htmlFor="image">Image URL</Label>
@@ -1006,15 +1216,26 @@ const Admin = () => {
             )}
             
             {itemType === "become-tv" && (
-              <div className="space-y-2">
-                <Label htmlFor="videoUrl">Video URL</Label>
-                <Input
-                  id="videoUrl"
-                  name="videoUrl"
-                  value={formData.videoUrl}
-                  onChange={handleFormChange}
-                />
-              </div>
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="videoUrl">Video URL</Label>
+                  <Input
+                    id="videoUrl"
+                    name="videoUrl"
+                    value={formData.videoUrl}
+                    onChange={handleFormChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="thumbnail">Thumbnail URL</Label>
+                  <Input
+                    id="thumbnail"
+                    name="thumbnail"
+                    value={formData.thumbnail}
+                    onChange={handleFormChange}
+                  />
+                </div>
+              </>
             )}
             
             {(itemType === "news" || itemType === "publications") && (
@@ -1029,16 +1250,18 @@ const Admin = () => {
               </div>
             )}
             
-            <div className="space-y-2">
-              <Label htmlFor="date">Date</Label>
-              <Input
-                id="date"
-                name="date"
-                type="date"
-                value={formData.date}
-                onChange={handleFormChange}
-              />
-            </div>
+            {(itemType === "trending" || itemType === "articles" || itemType === "news" || itemType === "become-tv" || itemType === "agricultural" || itemType === "education") && (
+              <div className="space-y-2">
+                <Label htmlFor="date">Date</Label>
+                <Input
+                  id="date"
+                  name="date"
+                  type="date"
+                  value={formData.date}
+                  onChange={handleFormChange}
+                />
+              </div>
+            )}
             
             <div className="flex justify-end space-x-2 pt-4">
               <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Cancel</Button>
@@ -1078,6 +1301,19 @@ const Admin = () => {
               </div>
             )}
             
+            {itemType === "news" && (
+              <div className="space-y-2">
+                <Label htmlFor="edit-text">News Text</Label>
+                <Textarea
+                  id="edit-text"
+                  name="text"
+                  value={formData.text}
+                  onChange={handleFormChange}
+                  rows={3}
+                />
+              </div>
+            )}
+            
             {(itemType === "become-tv" || itemType === "teaching" || itemType === "agricultural" || itemType === "education") && (
               <div className="space-y-2">
                 <Label htmlFor="edit-description">Description</Label>
@@ -1103,6 +1339,70 @@ const Admin = () => {
               </div>
             )}
             
+            {itemType === "publications" && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-authors">Authors</Label>
+                  <Input
+                    id="edit-authors"
+                    name="authors"
+                    value={formData.authors}
+                    onChange={handleFormChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-journal">Journal</Label>
+                  <Input
+                    id="edit-journal"
+                    name="journal"
+                    value={formData.journal}
+                    onChange={handleFormChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-year">Year</Label>
+                  <Input
+                    id="edit-year"
+                    name="year"
+                    value={formData.year}
+                    onChange={handleFormChange}
+                  />
+                </div>
+              </>
+            )}
+            
+            {itemType === "teaching" && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-semester">Semester</Label>
+                  <Input
+                    id="edit-semester"
+                    name="semester"
+                    value={formData.semester}
+                    onChange={handleFormChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-schedule">Schedule</Label>
+                  <Input
+                    id="edit-schedule"
+                    name="schedule"
+                    value={formData.schedule}
+                    onChange={handleFormChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-location">Location</Label>
+                  <Input
+                    id="edit-location"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleFormChange}
+                  />
+                </div>
+              </>
+            )}
+            
             {(itemType === "trending" || itemType === "articles" || itemType === "agricultural" || itemType === "education") && (
               <div className="space-y-2">
                 <Label htmlFor="edit-image">Image URL</Label>
@@ -1116,15 +1416,26 @@ const Admin = () => {
             )}
             
             {itemType === "become-tv" && (
-              <div className="space-y-2">
-                <Label htmlFor="edit-videoUrl">Video URL</Label>
-                <Input
-                  id="edit-videoUrl"
-                  name="videoUrl"
-                  value={formData.videoUrl}
-                  onChange={handleFormChange}
-                />
-              </div>
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-videoUrl">Video URL</Label>
+                  <Input
+                    id="edit-videoUrl"
+                    name="videoUrl"
+                    value={formData.videoUrl}
+                    onChange={handleFormChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-thumbnail">Thumbnail URL</Label>
+                  <Input
+                    id="edit-thumbnail"
+                    name="thumbnail"
+                    value={formData.thumbnail}
+                    onChange={handleFormChange}
+                  />
+                </div>
+              </>
             )}
             
             {(itemType === "news" || itemType === "publications") && (
@@ -1139,16 +1450,18 @@ const Admin = () => {
               </div>
             )}
             
-            <div className="space-y-2">
-              <Label htmlFor="edit-date">Date</Label>
-              <Input
-                id="edit-date"
-                name="date"
-                type="date"
-                value={formData.date}
-                onChange={handleFormChange}
-              />
-            </div>
+            {(itemType === "trending" || itemType === "articles" || itemType === "news" || itemType === "become-tv" || itemType === "agricultural" || itemType === "education") && (
+              <div className="space-y-2">
+                <Label htmlFor="edit-date">Date</Label>
+                <Input
+                  id="edit-date"
+                  name="date"
+                  type="date"
+                  value={formData.date}
+                  onChange={handleFormChange}
+                />
+              </div>
+            )}
             
             <div className="flex justify-end space-x-2 pt-4">
               <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Cancel</Button>
