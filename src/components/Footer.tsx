@@ -1,12 +1,21 @@
+
 import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Youtube } from "lucide-react";
+
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  
   const footerSections = {
-    news: ["Politics", "Business", "Technology", "Sports", "Entertainment", "Health"],
+    news: ["Politics", "Business", "Technology", "Sports", "Entertainment", "Health", "Agricultural", "Education"],
     company: ["About Us", "Contact", "Careers", "Press Kit", "Terms of Service", "Privacy Policy"],
     services: ["Newsletter", "RSS Feed", "Mobile App", "Advertising", "Partnerships", "Submit News"]
   };
-  return <footer className="bg-slate-900 text-white">
+
+  const handleEmailClick = () => {
+    window.location.href = "mailto:news@becomeconcepts.com?subject=Inquiry from BecomeConcepts Website";
+  };
+
+  return (
+    <footer className="bg-slate-900 text-white">
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand Section */}
@@ -16,9 +25,12 @@ const Footer = () => {
               Your trusted source for breaking news, in-depth analysis, and comprehensive coverage of global events.
             </p>
             <div className="space-y-2">
-              <div className="flex items-center space-x-2 text-sm text-slate-300">
+              <div 
+                className="flex items-center space-x-2 text-sm text-slate-300 cursor-pointer hover:text-white transition-colors"
+                onClick={handleEmailClick}
+              >
                 <Mail className="h-4 w-4" />
-                <span>news@newsdaily.com</span>
+                <span>news@becomeconcepts.com</span>
               </div>
               <div className="flex items-center space-x-2 text-sm text-slate-300">
                 <Phone className="h-4 w-4" />
@@ -35,11 +47,13 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4">News Categories</h4>
             <ul className="space-y-2">
-              {footerSections.news.map(item => <li key={item}>
+              {footerSections.news.map(item => (
+                <li key={item}>
                   <a href="#" className="text-slate-300 hover:text-white text-sm transition-colors">
                     {item}
                   </a>
-                </li>)}
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -47,11 +61,13 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4">Company</h4>
             <ul className="space-y-2">
-              {footerSections.company.map(item => <li key={item}>
+              {footerSections.company.map(item => (
+                <li key={item}>
                   <a href="#" className="text-slate-300 hover:text-white text-sm transition-colors">
                     {item}
                   </a>
-                </li>)}
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -59,11 +75,13 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4">Services</h4>
             <ul className="space-y-2">
-              {footerSections.services.map(item => <li key={item}>
+              {footerSections.services.map(item => (
+                <li key={item}>
                   <a href="#" className="text-slate-300 hover:text-white text-sm transition-colors">
                     {item}
                   </a>
-                </li>)}
+                </li>
+              ))}
             </ul>
           </div>
         </div>
@@ -84,13 +102,22 @@ const Footer = () => {
               <a href="#" className="text-slate-300 hover:text-white transition-colors">
                 <Youtube className="h-5 w-5" />
               </a>
+              <button 
+                onClick={handleEmailClick}
+                className="text-slate-300 hover:text-white transition-colors"
+                aria-label="Send us an email"
+              >
+                <Mail className="h-5 w-5" />
+              </button>
             </div>
             <p className="text-slate-400 text-sm">
-              © {currentYear} NewsDaily. All rights reserved.
+              © {currentYear} BecomeConcepts. All rights reserved.
             </p>
           </div>
         </div>
       </div>
-    </footer>;
+    </footer>
+  );
 };
+
 export default Footer;

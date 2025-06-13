@@ -7,6 +7,7 @@ import NewsGrid from "@/components/NewsGrid";
 import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
 import Advertisement from "@/components/Advertisement";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 const Index = () => {
   return (
@@ -35,7 +36,11 @@ const Index = () => {
           </div>
         </div>
       </div>
+      
       <Footer />
+      
+      {/* WhatsApp floating button */}
+      <WhatsAppButton />
     </div>
   );
 };

@@ -2,6 +2,7 @@
 import { TrendingUp, Mail, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import BecomeTVSection from "./BecomeTVSection";
 
 const Sidebar = () => {
   const trendingStories = [
@@ -71,6 +72,9 @@ const Sidebar = () => {
           ))}
         </div>
       </div>
+
+      {/* Become TV Section */}
+      <BecomeTVSection />
 
       {/* Newsletter Signup */}
       <div className="bg-blue-50 rounded-lg p-6">
