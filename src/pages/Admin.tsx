@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -11,20 +10,27 @@ import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Trash2, Edit, Plus, Upload, User, Settings, LogOut, Eye, EyeOff, FileText, Image, Video, Sprout, GraduationCap, TrendingUp, BookOpen, Newspaper, Calendar, Clock, MapPin, Users, Star, MessageSquare, ThumbsUp } from "lucide-react";
+import { Trash2, Edit, Plus, Upload, User, Settings, LogOut, Eye, EyeOff, FileText, Image, Video, Sprout, GraduationCap, TrendingUp, BookOpen, Newspaper, Calendar, Clock, MapPin, Users, Star, MessageCircle, ThumbsUp } from "lucide-react";
 import InteractionTracker from "@/components/InteractionTracker";
 import FileUpload from "@/components/FileUpload";
 import BecomeTVSection from "@/components/BecomeTVSection";
+import AdminProfile from "@/components/AdminProfile";
+import MediaUpload from "@/components/MediaUpload";
+import EngagementTracker from "@/components/EngagementTracker";
 
 const Admin = () => {
   // Authentication State
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loginForm, setLoginForm] = useState({ username: "", password: "" });
+  
+  // Enhanced admin profile state
   const [adminProfile, setAdminProfile] = useState({
     name: "Admin User",
     email: "admin@becomeconcepts.com",
     role: "Super Admin",
-    avatar: "/placeholder.svg?height=100&width=100"
+    avatar: "/placeholder.svg?height=100&width=100",
+    whatsappNumber: "254798890521",
+    bio: "Experienced administrator managing BecomeConcepts platform with expertise in content management and user engagement."
   });
 
   // Content States with enhanced data structures
@@ -34,20 +40,30 @@ const Admin = () => {
       title: "Breaking: Major Policy Change Announced",
       content: "The government has announced a significant policy shift that will affect various sectors across the country. This comprehensive reform aims to modernize infrastructure and boost economic growth through strategic investments.",
       excerpt: "Government announces significant policy shift affecting multiple sectors...",
-      image: "https://images.unsplash.com/photo-1586339949916-3e9457bef6d3?w=600&h=400&fit=crop",
+      media: [
+        {
+          id: "1",
+          type: "image" as const,
+          url: "https://images.unsplash.com/photo-1586339949916-3e9457bef6d3?w=600&h=400&fit=crop",
+          name: "policy-announcement.jpg",
+          size: 245760
+        }
+      ],
       category: "Politics",
       tags: ["policy", "government", "reform"],
       author: "News Team",
       date: "2024-01-15",
-      status: "published",
+      status: "published" as const,
       featured: true,
-      priority: "high",
-      views: 1245,
-      likes: 89,
-      comments: [
-        { id: 1, author: "John Doe", content: "This is a game changer!", timestamp: "2024-01-15 14:30" },
-        { id: 2, author: "Jane Smith", content: "I'm not sure about this...", timestamp: "2024-01-15 15:45" }
-      ]
+      priority: "high" as const,
+      engagement: {
+        views: 1245,
+        likes: 89,
+        comments: [
+          { id: 1, author: "John Doe", content: "This is a game changer!", timestamp: "2024-01-15 14:30", likes: 5, replies: [] },
+          { id: 2, author: "Jane Smith", content: "I'm not sure about this...", timestamp: "2024-01-15 15:45", likes: 2, replies: [] }
+        ]
+      }
     },
     {
       id: 2,
@@ -137,6 +153,7 @@ const Admin = () => {
       id: 1,
       title: "Introduction to Data Science",
       description: "A comprehensive course covering the fundamentals of data science and analytics, including statistical methods, data visualization, and machine learning basics.",
+      content: "This course provides a solid foundation in data science principles and practical applications using modern tools and techniques.",
       code: "CS401",
       credits: 3,
       semester: "Fall 2024",
@@ -144,15 +161,26 @@ const Admin = () => {
       location: "Science Building, Room 305",
       capacity: 30,
       enrolled: 28,
-      syllabus: null,
       prerequisites: "Statistics 101, Programming Fundamentals",
       textbooks: "Introduction to Statistical Learning, Python for Data Analysis",
-      status: "active",
-      views: 678,
-      likes: 52,
-      comments: [
-        { id: 1, author: "Student123", content: "Great course structure!", timestamp: "2024-01-20 14:15" }
-      ]
+      level: "Beginner" as const,
+      media: [
+        {
+          id: "1",
+          type: "pdf" as const,
+          url: "/syllabus-data-science.pdf",
+          name: "Data Science Syllabus.pdf",
+          size: 156720
+        }
+      ],
+      status: "active" as const,
+      engagement: {
+        views: 678,
+        likes: 52,
+        comments: [
+          { id: 1, author: "Student123", content: "Great course structure!", timestamp: "2024-01-20 14:15", likes: 8, replies: [] }
+        ]
+      }
     }
   ]);
 
@@ -209,21 +237,66 @@ const Admin = () => {
       title: "Modern Teaching Methodologies",
       description: "Exploring innovative approaches to education in the digital age, including blended learning and technology integration.",
       content: "Comprehensive overview of contemporary teaching methods that engage students and improve learning outcomes...",
-      image: "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=600&h=400&fit=crop",
+      media: [
+        {
+          id: "1",
+          type: "image" as const,
+          url: "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=600&h=400&fit=crop",
+          name: "teaching-methods.jpg",
+          size: 287340
+        }
+      ],
       category: "Teaching Methods",
       tags: ["education", "technology", "innovation"],
       author: "Education Team",
       date: "2024-01-10",
-      level: "All Levels",
+      level: "Intermediate" as const,
       subject: "General Education",
       duration: "Professional Development",
       certification: "CPD Credits Available",
-      status: "published",
-      views: 645,
-      likes: 47,
-      comments: [
-        { id: 1, author: "TeacherX", content: "I've implemented some of these methods with great results!", timestamp: "2024-01-11 14:20" }
-      ]
+      status: "published" as const,
+      engagement: {
+        views: 645,
+        likes: 47,
+        comments: [
+          { id: 1, author: "TeacherX", content: "I've implemented some of these methods with great results!", timestamp: "2024-01-11 14:20", likes: 12, replies: [] }
+        ]
+      }
+    }
+  ]);
+
+  // Add new advertisements state
+  const [advertisements, setAdvertisements] = useState([
+    {
+      id: 1,
+      title: "Premium Business Solutions",
+      description: "Discover our comprehensive business solutions designed to accelerate your company's growth and success.",
+      content: "Our premium business solutions offer cutting-edge technology, expert consultation, and ongoing support to help your business thrive in today's competitive market.",
+      media: [
+        {
+          id: "1",
+          type: "image" as const,
+          url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&h=400&fit=crop",
+          name: "business-solutions.jpg",
+          size: 342560
+        }
+      ],
+      category: "Business",
+      tags: ["business", "solutions", "growth"],
+      author: "Marketing Team",
+      date: "2024-01-20",
+      status: "published" as const,
+      featured: true,
+      targetAudience: "Business Owners",
+      budget: 5000,
+      duration: "30 days",
+      engagement: {
+        views: 892,
+        likes: 64,
+        comments: [
+          { id: 1, author: "Business Owner", content: "Interested in learning more!", timestamp: "2024-01-20 10:30", likes: 3, replies: [] }
+        ]
+      }
     }
   ]);
 
@@ -241,14 +314,35 @@ const Admin = () => {
     title: "",
     content: "",
     excerpt: "",
-    image: "",
+    description: "",
+    media: [] as any[],
     date: "",
     author: "",
+    category: "",
+    tags: "",
+    status: "draft" as const,
+    featured: false,
+    priority: "medium" as const,
+    level: "Beginner" as const,
+    targetAudience: "",
+    budget: "",
+    duration: "",
+    subject: "",
+    certification: "",
+    code: "",
+    credits: "",
+    schedule: "",
+    location: "",
+    capacity: "",
+    enrolled: "",
+    prerequisites: "",
+    textbooks: "",
+    semester: "",
+    image: "",
     authorBio: "",
     link: "",
     videoUrl: "",
     youtubeId: "",
-    description: "",
     text: "",
     authors: "",
     journal: "",
@@ -260,31 +354,13 @@ const Admin = () => {
     abstract: "",
     keywords: "",
     pdfFile: null,
-    semester: "",
-    schedule: "",
-    location: "",
-    capacity: "",
-    enrolled: "",
-    code: "",
-    credits: "",
-    prerequisites: "",
-    textbooks: "",
     syllabus: null,
     thumbnail: "",
-    duration: "",
-    category: "",
-    tags: "",
-    status: "draft",
-    featured: false,
-    priority: "medium",
     region: "",
     cropTypes: "",
     season: "",
     difficulty: "",
     cost: "",
-    level: "",
-    subject: "",
-    certification: "",
     readTime: ""
   });
 
@@ -306,10 +382,17 @@ const Admin = () => {
   const handleAddItem = () => {
     const baseItem = {
       id: Date.now(),
-      views: 0,
-      likes: 0,
-      comments: [],
-      status: formData.status || "draft"
+      engagement: {
+        views: 0,
+        likes: 0,
+        comments: []
+      },
+      status: formData.status,
+      date: formData.date,
+      author: formData.author,
+      category: formData.category,
+      tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
+      media: formData.media
     };
 
     let newItem;
@@ -321,16 +404,60 @@ const Admin = () => {
           title: formData.title,
           content: formData.content,
           excerpt: formData.excerpt,
-          image: formData.image,
-          category: formData.category,
-          tags: formData.tags.split(',').map(tag => tag.trim()),
-          author: formData.author,
-          date: formData.date,
           featured: formData.featured,
           priority: formData.priority
         };
         setTrendingNews([...trendingNews, newItem]);
         break;
+
+      case "advertisements":
+        newItem = {
+          ...baseItem,
+          title: formData.title,
+          description: formData.description,
+          content: formData.content,
+          featured: formData.featured,
+          targetAudience: formData.targetAudience,
+          budget: parseInt(formData.budget) || 0,
+          duration: formData.duration
+        };
+        setAdvertisements([...advertisements, newItem]);
+        break;
+
+      case "teaching":
+        newItem = {
+          ...baseItem,
+          title: formData.title,
+          description: formData.description,
+          content: formData.content,
+          code: formData.code,
+          credits: parseInt(formData.credits) || 3,
+          semester: formData.semester,
+          schedule: formData.schedule,
+          location: formData.location,
+          capacity: parseInt(formData.capacity) || 30,
+          enrolled: parseInt(formData.enrolled) || 0,
+          prerequisites: formData.prerequisites,
+          textbooks: formData.textbooks,
+          level: formData.level
+        };
+        setTeaching([...teaching, newItem]);
+        break;
+
+      case "education":
+        newItem = {
+          ...baseItem,
+          title: formData.title,
+          description: formData.description,
+          content: formData.content,
+          level: formData.level,
+          subject: formData.subject,
+          duration: formData.duration,
+          certification: formData.certification
+        };
+        setEducationItems([...educationItems, newItem]);
+        break;
+
       case "articles":
         newItem = {
           ...baseItem,
@@ -379,24 +506,6 @@ const Admin = () => {
         };
         setPublications([...publications, newItem]);
         break;
-      case "teaching":
-        newItem = {
-          ...baseItem,
-          title: formData.title,
-          description: formData.description,
-          code: formData.code,
-          credits: parseInt(formData.credits) || 3,
-          semester: formData.semester,
-          schedule: formData.schedule,
-          location: formData.location,
-          capacity: parseInt(formData.capacity) || 30,
-          enrolled: parseInt(formData.enrolled) || 0,
-          prerequisites: formData.prerequisites,
-          textbooks: formData.textbooks,
-          syllabus: formData.syllabus
-        };
-        setTeaching([...teaching, newItem]);
-        break;
       case "become-tv":
         newItem = {
           ...baseItem,
@@ -431,24 +540,6 @@ const Admin = () => {
           cost: formData.cost
         };
         setAgriculturalItems([...agriculturalItems, newItem]);
-        break;
-      case "education":
-        newItem = {
-          ...baseItem,
-          title: formData.title,
-          description: formData.description,
-          content: formData.content,
-          image: formData.image,
-          category: formData.category,
-          tags: formData.tags.split(',').map(tag => tag.trim()),
-          author: formData.author,
-          date: formData.date,
-          level: formData.level,
-          subject: formData.subject,
-          duration: formData.duration,
-          certification: formData.certification
-        };
-        setEducationItems([...educationItems, newItem]);
         break;
       default:
         break;
@@ -531,6 +622,9 @@ const Admin = () => {
       case "education":
         setEducationItems(educationItems.filter(item => item.id !== currentItem.id));
         break;
+      case "advertisements":
+        setAdvertisements(advertisements.filter(item => item.id !== currentItem.id));
+        break;
       default:
         break;
     }
@@ -586,10 +680,13 @@ const Admin = () => {
       season: item.season || "",
       difficulty: item.difficulty || "",
       cost: item.cost || "",
-      level: item.level || "",
+      level: item.level || "Beginner",
       subject: item.subject || "",
       certification: item.certification || "",
-      readTime: item.readTime || ""
+      readTime: item.readTime || "",
+      media: item.media || [],
+      targetAudience: item.targetAudience || "",
+      budget: item.budget?.toString() || ""
     });
     setIsEditDialogOpen(true);
   };
@@ -646,10 +743,13 @@ const Admin = () => {
       season: "",
       difficulty: "",
       cost: "",
-      level: "",
+      level: "Beginner",
       subject: "",
       certification: "",
-      readTime: ""
+      readTime: "",
+      media: [],
+      targetAudience: "",
+      budget: ""
     });
     setCurrentItem(null);
     setItemType("");
@@ -668,6 +768,19 @@ const Admin = () => {
       ...formData,
       [fieldName]: file
     });
+  };
+
+  const handleMediaSelect = (media) => {
+    setFormData({
+      ...formData,
+      media: media
+    });
+  };
+
+  const updateAdminProfile = (newProfile) => {
+    setAdminProfile(newProfile);
+    // Here you would typically save to backend
+    console.log("Profile updated:", newProfile);
   };
 
   const toggleItemStatus = (item, type) => {
@@ -808,43 +921,17 @@ const Admin = () => {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <Tabs defaultValue="dashboard" onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-9 mb-8 bg-white/50 backdrop-blur-sm">
-            <TabsTrigger value="dashboard" className="flex items-center space-x-2">
-              <TrendingUp className="h-4 w-4" />
-              <span className="hidden sm:inline">Dashboard</span>
-            </TabsTrigger>
-            <TabsTrigger value="trending" className="flex items-center space-x-2">
-              <Newspaper className="h-4 w-4" />
-              <span className="hidden sm:inline">Trending</span>
-            </TabsTrigger>
-            <TabsTrigger value="articles" className="flex items-center space-x-2">
-              <FileText className="h-4 w-4" />
-              <span className="hidden sm:inline">Articles</span>
-            </TabsTrigger>
-            <TabsTrigger value="news" className="flex items-center space-x-2">
-              <Newspaper className="h-4 w-4" />
-              <span className="hidden sm:inline">News</span>
-            </TabsTrigger>
-            <TabsTrigger value="publications" className="flex items-center space-x-2">
-              <BookOpen className="h-4 w-4" />
-              <span className="hidden sm:inline">Publications</span>
-            </TabsTrigger>
-            <TabsTrigger value="teaching" className="flex items-center space-x-2">
-              <GraduationCap className="h-4 w-4" />
-              <span className="hidden sm:inline">Teaching</span>
-            </TabsTrigger>
-            <TabsTrigger value="become-tv" className="flex items-center space-x-2">
-              <Video className="h-4 w-4" />
-              <span className="hidden sm:inline">TV</span>
-            </TabsTrigger>
-            <TabsTrigger value="agricultural" className="flex items-center space-x-2">
-              <Sprout className="h-4 w-4" />
-              <span className="hidden sm:inline">Agriculture</span>
-            </TabsTrigger>
-            <TabsTrigger value="education" className="flex items-center space-x-2">
-              <GraduationCap className="h-4 w-4" />
-              <span className="hidden sm:inline">Education</span>
-            </TabsTrigger>
+          <TabsList className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-10 mb-8 bg-white/50 backdrop-blur-sm">
+            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+            <TabsTrigger value="profile">Profile</TabsTrigger>
+            <TabsTrigger value="trending">Trending</TabsTrigger>
+            <TabsTrigger value="advertisements">Ads</TabsTrigger>
+            <TabsTrigger value="teaching">Teaching</TabsTrigger>
+            <TabsTrigger value="education">Education</TabsTrigger>
+            <TabsTrigger value="agricultural">Agriculture</TabsTrigger>
+            <TabsTrigger value="become-tv">TV</TabsTrigger>
+            <TabsTrigger value="news">News</TabsTrigger>
+            <TabsTrigger value="publications">Publications</TabsTrigger>
           </TabsList>
 
           {/* Dashboard Overview */}
@@ -941,7 +1028,15 @@ const Admin = () => {
             </div>
           </TabsContent>
 
-          {/* Trending News Management */}
+          {/* New Admin Profile Tab */}
+          <TabsContent value="profile">
+            <AdminProfile 
+              profile={adminProfile}
+              onUpdateProfile={updateAdminProfile}
+            />
+          </TabsContent>
+
+          {/* Enhanced Trending News Management */}
           <TabsContent value="trending">
             <Card className="bg-white/50 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
@@ -951,7 +1046,7 @@ const Admin = () => {
                       <TrendingUp className="h-5 w-5 text-blue-600" />
                       <span>Trending News Management</span>
                     </CardTitle>
-                    <CardDescription>Manage breaking news and trending stories</CardDescription>
+                    <CardDescription>Manage breaking news and trending stories with rich media</CardDescription>
                   </div>
                   <Button onClick={() => {
                     setItemType("trending");
@@ -969,7 +1064,14 @@ const Admin = () => {
                       <CardContent className="p-6">
                         <div className="flex flex-col lg:flex-row gap-6">
                           <div className="lg:w-48 h-32 rounded-lg overflow-hidden bg-gray-100">
-                            {news.image && (
+                            {news.media?.[0] && news.media[0].type === 'image' && (
+                              <img 
+                                src={news.media[0].url} 
+                                alt={news.title}
+                                className="w-full h-full object-cover"
+                              />
+                            )}
+                            {!news.media && news.image && (
                               <img 
                                 src={news.image} 
                                 alt={news.title}
@@ -1013,55 +1115,52 @@ const Admin = () => {
                               </div>
                             </div>
                             <p className="text-gray-600 mb-3 line-clamp-2">{news.excerpt || news.content}</p>
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center space-x-4 text-sm text-gray-500">
-                                <span className="flex items-center space-x-1">
-                                  <Calendar className="h-4 w-4" />
-                                  <span>{news.date}</span>
-                                </span>
-                                <span className="flex items-center space-x-1">
-                                  <User className="h-4 w-4" />
-                                  <span>{news.author}</span>
-                                </span>
-                                {news.category && (
-                                  <Badge variant="outline">{news.category}</Badge>
+                            <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                              <div className="flex items-center space-x-4">
+                                <span>{news.date}</span>
+                                <span>{news.author}</span>
+                                <Badge variant="outline">{news.category}</Badge>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                {news.media?.length > 0 && (
+                                  <Badge variant="secondary" className="text-xs">
+                                    {news.media.length} Media
+                                  </Badge>
                                 )}
                               </div>
-                              <div className="flex items-center space-x-4 text-sm text-gray-500">
-                                <span className="flex items-center space-x-1">
-                                  <Eye className="h-4 w-4" />
-                                  <span>{news.views}</span>
-                                </span>
-                                <span className="flex items-center space-x-1">
-                                  <ThumbsUp className="h-4 w-4" />
-                                  <span>{news.likes}</span>
-                                </span>
-                                <span className="flex items-center space-x-1">
-                                  <MessageSquare className="h-4 w-4" />
-                                  <span>{news.comments?.length || 0}</span>
-                                </span>
-                              </div>
                             </div>
+                            
+                            {news.engagement ? (
+                              <EngagementTracker
+                                itemType="news"
+                                itemId={news.id}
+                                engagement={news.engagement}
+                                onUpdateEngagement={(engagement) => {
+                                  setTrendingNews(prev => prev.map(n => 
+                                    n.id === news.id ? { ...n, engagement } : n
+                                  ));
+                                }}
+                                isAdmin={true}
+                              />
+                            ) : (
+                              <InteractionTracker
+                                itemType="news"
+                                itemId={news.id}
+                                interactions={{
+                                  views: news.views,
+                                  likes: news.likes,
+                                  comments: news.comments
+                                }}
+                                onUpdateInteractions={(interactions) => {
+                                  setTrendingNews(prev => prev.map(n => 
+                                    n.id === news.id ? { ...n, ...interactions } : n
+                                  ));
+                                }}
+                                isAdmin={true}
+                              />
+                            )}
                           </div>
                         </div>
-                        
-                        <Separator className="my-4" />
-                        
-                        <InteractionTracker
-                          itemType="news"
-                          itemId={news.id}
-                          interactions={{
-                            views: news.views,
-                            likes: news.likes,
-                            comments: news.comments
-                          }}
-                          onUpdateInteractions={(interactions) => {
-                            setTrendingNews(prev => prev.map(n => 
-                              n.id === news.id ? { ...n, ...interactions } : n
-                            ));
-                          }}
-                          isAdmin={true}
-                        />
                       </CardContent>
                     </Card>
                   ))}
@@ -1070,38 +1169,38 @@ const Admin = () => {
             </Card>
           </TabsContent>
 
-          {/* Articles Management */}
-          <TabsContent value="articles">
+          {/* New Advertisements Management */}
+          <TabsContent value="advertisements">
             <Card className="bg-white/50 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
                 <div className="flex justify-between items-center">
                   <div>
                     <CardTitle className="flex items-center space-x-2">
-                      <FileText className="h-5 w-5 text-green-600" />
-                      <span>Articles Management</span>
+                      <Image className="h-5 w-5 text-green-600" />
+                      <span>Advertisement Management</span>
                     </CardTitle>
-                    <CardDescription>Manage in-depth articles and features</CardDescription>
+                    <CardDescription>Create and manage advertisements with rich media content</CardDescription>
                   </div>
                   <Button onClick={() => {
-                    setItemType("articles");
+                    setItemType("advertisements");
                     setIsAddDialogOpen(true);
                   }} className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700">
                     <Plus className="h-4 w-4 mr-2" />
-                    Add Article
+                    Add Advertisement
                   </Button>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
-                  {articles.map((article) => (
-                    <Card key={article.id} className="border border-gray-200/50 hover:shadow-md transition-shadow">
+                  {advertisements.map((ad) => (
+                    <Card key={ad.id} className="border border-gray-200/50 hover:shadow-md transition-shadow">
                       <CardContent className="p-6">
                         <div className="flex flex-col lg:flex-row gap-6">
                           <div className="lg:w-48 h-32 rounded-lg overflow-hidden bg-gray-100">
-                            {article.image && (
+                            {ad.media?.[0] && ad.media[0].type === 'image' && (
                               <img 
-                                src={article.image} 
-                                alt={article.title}
+                                src={ad.media[0].url} 
+                                alt={ad.title}
                                 className="w-full h-full object-cover"
                               />
                             )}
@@ -1109,87 +1208,648 @@ const Admin = () => {
                           <div className="flex-1">
                             <div className="flex justify-between items-start mb-3">
                               <div className="flex items-center space-x-3">
-                                <h3 className="font-semibold text-lg text-gray-900">{article.title}</h3>
-                                {article.featured && (
+                                <h3 className="font-semibold text-lg text-gray-900">{ad.title}</h3>
+                                {ad.featured && (
                                   <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
                                     <Star className="h-3 w-3 mr-1" />
                                     Featured
                                   </Badge>
                                 )}
+                                <Badge variant="outline">${ad.budget}</Badge>
                               </div>
                               <div className="flex items-center space-x-2">
-                                <Switch
-                                  checked={article.status === 'published'}
-                                  onCheckedChange={() => toggleItemStatus(article, "articles")}
-                                />
                                 <Button 
                                   variant="outline" 
                                   size="sm"
-                                  onClick={() => openEditDialog(article, "articles")}
+                                  onClick={() => openEditDialog(ad, "advertisements")}
                                 >
                                   <Edit className="h-4 w-4" />
                                 </Button>
                                 <Button 
                                   variant="destructive" 
                                   size="sm"
-                                  onClick={() => openDeleteDialog(article, "articles")}
+                                  onClick={() => openDeleteDialog(ad, "advertisements")}
                                 >
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
                               </div>
                             </div>
-                            <p className="text-gray-600 mb-3 line-clamp-2">{article.excerpt || article.content}</p>
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center space-x-4 text-sm text-gray-500">
-                                <span className="flex items-center space-x-1">
-                                  <Calendar className="h-4 w-4" />
-                                  <span>{article.date}</span>
-                                </span>
-                                <span className="flex items-center space-x-1">
-                                  <User className="h-4 w-4" />
-                                  <span>{article.author}</span>
-                                </span>
-                                {article.readTime && (
-                                  <span className="flex items-center space-x-1">
-                                    <Clock className="h-4 w-4" />
-                                    <span>{article.readTime}</span>
-                                  </span>
-                                )}
-                                {article.category && (
-                                  <Badge variant="outline">{article.category}</Badge>
-                                )}
-                              </div>
-                              <div className="flex items-center space-x-4 text-sm text-gray-500">
-                                <span className="flex items-center space-x-1">
-                                  <Eye className="h-4 w-4" />
-                                  <span>{article.views}</span>
-                                </span>
-                                <span className="flex items-center space-x-1">
-                                  <ThumbsUp className="h-4 w-4" />
-                                  <span>{article.likes}</span>
-                                </span>
-                                <span className="flex items-center space-x-1">
-                                  <MessageSquare className="h-4 w-4" />
-                                  <span>{article.comments?.length || 0}</span>
-                                </span>
+                            <p className="text-gray-600 mb-3 line-clamp-2">{ad.description}</p>
+                            <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                              <div className="flex items-center space-x-4">
+                                <span>{ad.duration}</span>
+                                <span>{ad.targetAudience}</span>
+                                <Badge variant="outline">{ad.category}</Badge>
                               </div>
                             </div>
+                            
+                            <EngagementTracker
+                              itemType="advertisement"
+                              itemId={ad.id}
+                              engagement={ad.engagement}
+                              onUpdateEngagement={(engagement) => {
+                                setAdvertisements(prev => prev.map(a => 
+                                  a.id === ad.id ? { ...a, engagement } : a
+                                ));
+                              }}
+                              isAdmin={true}
+                            />
                           </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Enhanced Teaching Management with Levels */}
+          <TabsContent value="teaching">
+            <Card className="bg-white/50 backdrop-blur-sm border-0 shadow-lg">
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle className="flex items-center space-x-2">
+                      <GraduationCap className="h-5 w-5 text-purple-600" />
+                      <span>Teaching Management</span>
+                    </CardTitle>
+                    <CardDescription>Manage courses and teaching materials with difficulty levels</CardDescription>
+                  </div>
+                  <Button onClick={() => {
+                    setItemType("teaching");
+                    setIsAddDialogOpen(true);
+                  }} className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Course
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {teaching.map((course) => (
+                    <Card key={course.id} className="border border-gray-200/50 hover:shadow-md transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="flex items-center space-x-3">
+                            <h3 className="font-semibold text-lg text-gray-900">{course.title}</h3>
+                            <Badge variant={
+                              course.level === 'Beginner' ? 'secondary' : 
+                              course.level === 'Intermediate' ? 'default' : 'destructive'
+                            }>
+                              {course.level}
+                            </Badge>
+                            <Badge variant="outline">{course.code}</Badge>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => openEditDialog(course, "teaching")}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="destructive" 
+                              size="sm"
+                              onClick={() => openDeleteDialog(course, "teaching")}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                        <p className="text-gray-600 mb-3">{course.description}</p>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-500 mb-4">
+                          <div>
+                            <span className="font-medium">Credits:</span> {course.credits}
+                          </div>
+                          <div>
+                            <span className="font-medium">Enrolled:</span> {course.enrolled}/{course.capacity}
+                          </div>
+                          <div>
+                            <span className="font-medium">Schedule:</span> {course.schedule}
+                          </div>
+                          <div>
+                            <span className="font-medium">Location:</span> {course.location}
+                          </div>
+                        </div>
+                        
+                        {course.engagement ? (
+                          <EngagementTracker
+                            itemType="teaching"
+                            itemId={course.id}
+                            engagement={course.engagement}
+                            onUpdateEngagement={(engagement) => {
+                              setTeaching(prev => prev.map(t => 
+                                t.id === course.id ? { ...t, engagement } : t
+                              ));
+                            }}
+                            isAdmin={true}
+                          />
+                        ) : (
+                          <InteractionTracker
+                            itemType="teaching"
+                            itemId={course.id}
+                            interactions={{
+                              views: course.views || 0,
+                              likes: course.likes || 0,
+                              comments: course.comments || []
+                            }}
+                            onUpdateInteractions={(interactions) => {
+                              setTeaching(prev => prev.map(t => 
+                                t.id === course.id ? { ...t, ...interactions } : t
+                              ));
+                            }}
+                            isAdmin={true}
+                          />
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Enhanced Education Management with Levels */}
+          <TabsContent value="education">
+            <Card className="bg-white/50 backdrop-blur-sm border-0 shadow-lg">
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle className="flex items-center space-x-2">
+                      <BookOpen className="h-5 w-5 text-indigo-600" />
+                      <span>Education Content Management</span>
+                    </CardTitle>
+                    <CardDescription>Manage educational resources with difficulty levels</CardDescription>
+                  </div>
+                  <Button onClick={() => {
+                    setItemType("education");
+                    setIsAddDialogOpen(true);
+                  }} className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Education Content
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {educationItems.map((item) => (
+                    <Card key={item.id} className="border border-gray-200/50 hover:shadow-md transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="flex flex-col lg:flex-row gap-6">
+                          <div className="lg:w-48 h-32 rounded-lg overflow-hidden bg-gray-100">
+                            {item.media?.[0] && item.media[0].type === 'image' && (
+                              <img 
+                                src={item.media[0].url} 
+                                alt={item.title}
+                                className="w-full h-full object-cover"
+                              />
+                            )}
+                            {!item.media && item.image && (
+                              <img 
+                                src={item.image} 
+                                alt={item.title}
+                                className="w-full h-full object-cover"
+                              />
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex justify-between items-start mb-3">
+                              <div className="flex items-center space-x-3">
+                                <h3 className="font-semibold text-lg text-gray-900">{item.title}</h3>
+                                <Badge variant={
+                                  item.level === 'Beginner' ? 'secondary' : 
+                                  item.level === 'Intermediate' ? 'default' : 'destructive'
+                                }>
+                                  {item.level}
+                                </Badge>
+                                <Badge variant="outline">{item.subject}</Badge>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => openEditDialog(item, "education")}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button 
+                                  variant="destructive" 
+                                  size="sm"
+                                  onClick={() => openDeleteDialog(item, "education")}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                            <p className="text-gray-600 mb-3">{item.description}</p>
+                            <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                              <div className="flex items-center space-x-4">
+                                <span>{item.duration}</span>
+                                <span>{item.certification}</span>
+                                <Badge variant="outline">{item.category}</Badge>
+                              </div>
+                            </div>
+                            
+                            {item.engagement ? (
+                              <EngagementTracker
+                                itemType="education"
+                                itemId={item.id}
+                                engagement={item.engagement}
+                                onUpdateEngagement={(engagement) => {
+                                  setEducationItems(prev => prev.map(e => 
+                                    e.id === item.id ? { ...e, engagement } : e
+                                  ));
+                                }}
+                                isAdmin={true}
+                              />
+                            ) : (
+                              <InteractionTracker
+                                itemType="education"
+                                itemId={item.id}
+                                interactions={{
+                                  views: item.views || 0,
+                                  likes: item.likes || 0,
+                                  comments: item.comments || []
+                                }}
+                                onUpdateInteractions={(interactions) => {
+                                  setEducationItems(prev => prev.map(e => 
+                                    e.id === item.id ? { ...e, ...interactions } : e
+                                  ));
+                                }}
+                                isAdmin={true}
+                              />
+                            )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Agricultural Content Management */}
+          <TabsContent value="agricultural">
+            <Card className="bg-white/50 backdrop-blur-sm border-0 shadow-lg">
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle className="flex items-center space-x-2">
+                      <Sprout className="h-5 w-5 text-green-600" />
+                      <span>Agricultural Content Management</span>
+                    </CardTitle>
+                    <CardDescription>Manage farming and agricultural resources</CardDescription>
+                  </div>
+                  <Button onClick={() => {
+                    setItemType("agricultural");
+                    setIsAddDialogOpen(true);
+                  }} className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Agricultural Content
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {agriculturalItems.map((item) => (
+                    <Card key={item.id} className="border border-gray-200/50 hover:shadow-md transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="flex flex-col lg:flex-row gap-6">
+                          <div className="lg:w-48 h-32 rounded-lg overflow-hidden bg-gray-100">
+                            {item.image && (
+                              <img 
+                                src={item.image} 
+                                alt={item.title}
+                                className="w-full h-full object-cover"
+                              />
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex justify-between items-start mb-3">
+                              <div className="flex items-center space-x-3">
+                                <h3 className="font-semibold text-lg text-gray-900">{item.title}</h3>
+                                <Badge variant="outline">{item.difficulty}</Badge>
+                                <Badge variant="secondary">{item.region}</Badge>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => openEditDialog(item, "agricultural")}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button 
+                                  variant="destructive" 
+                                  size="sm"
+                                  onClick={() => openDeleteDialog(item, "agricultural")}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                            <p className="text-gray-600 mb-3">{item.description}</p>
+                            <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                              <div className="flex items-center space-x-4">
+                                <span>{item.season}</span>
+                                <span>Cost: {item.cost}</span>
+                                <Badge variant="outline">{item.category}</Badge>
+                              </div>
+                            </div>
+                            
+                            <InteractionTracker
+                              itemType="agricultural"
+                              itemId={item.id}
+                              interactions={{
+                                views: item.views,
+                                likes: item.likes,
+                                comments: item.comments
+                              }}
+                              onUpdateInteractions={(interactions) => {
+                                setAgriculturalItems(prev => prev.map(a => 
+                                  a.id === item.id ? { ...a, ...interactions } : a
+                                ));
+                              }}
+                              isAdmin={true}
+                            />
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Become TV Management */}
+          <TabsContent value="become-tv">
+            <Card className="bg-white/50 backdrop-blur-sm border-0 shadow-lg">
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle className="flex items-center space-x-2">
+                      <Video className="h-5 w-5 text-red-600" />
+                      <span>Become TV Management</span>
+                    </CardTitle>
+                    <CardDescription>Manage video content and YouTube integrations</CardDescription>
+                  </div>
+                  <Button onClick={() => {
+                    setItemType("become-tv");
+                    setIsAddDialogOpen(true);
+                  }} className="bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Video
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {becomeTVVideos.map((video) => (
+                    <Card key={video.id} className="border border-gray-200/50 hover:shadow-md transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="flex flex-col lg:flex-row gap-6">
+                          <div className="lg:w-48 h-32 rounded-lg overflow-hidden bg-gray-100 relative">
+                            {video.thumbnail && (
+                              <>
+                                <img 
+                                  src={video.thumbnail} 
+                                  alt={video.title}
+                                  className="w-full h-full object-cover"
+                                />
+                                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
+                                  <div className="bg-red-600 text-white rounded-full p-2">
+                                    <Video className="h-5 w-5" />
+                                  </div>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex justify-between items-start mb-3">
+                              <div className="flex items-center space-x-3">
+                                <h3 className="font-semibold text-lg text-gray-900">{video.title}</h3>
+                                {video.featured && (
+                                  <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
+                                    <Star className="h-3 w-3 mr-1" />
+                                    Featured
+                                  </Badge>
+                                )}
+                                <Badge variant="outline">{video.duration}</Badge>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => openEditDialog(video, "become-tv")}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button 
+                                  variant="destructive" 
+                                  size="sm"
+                                  onClick={() => openDeleteDialog(video, "become-tv")}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                            <p className="text-gray-600 mb-3">{video.description}</p>
+                            <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                              <div className="flex items-center space-x-4">
+                                <span>{video.date}</span>
+                                <Badge variant="outline">{video.category}</Badge>
+                              </div>
+                            </div>
+                            
+                            <InteractionTracker
+                              itemType="news"
+                              itemId={video.id}
+                              interactions={{
+                                views: video.views,
+                                likes: video.likes,
+                                comments: video.comments
+                              }}
+                              onUpdateInteractions={(interactions) => {
+                                setBecomeTVVideos(prev => prev.map(v => 
+                                  v.id === video.id ? { ...v, ...interactions } : v
+                                ));
+                              }}
+                              isAdmin={true}
+                            />
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* News Crawl Management */}
+          <TabsContent value="news">
+            <Card className="bg-white/50 backdrop-blur-sm border-0 shadow-lg">
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle className="flex items-center space-x-2">
+                      <Newspaper className="h-5 w-5 text-blue-600" />
+                      <span>News Crawl Management</span>
+                    </CardTitle>
+                    <CardDescription>Manage scrolling news ticker items</CardDescription>
+                  </div>
+                  <Button onClick={() => {
+                    setItemType("news");
+                    setIsAddDialogOpen(true);
+                  }} className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add News Item
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {newsCrawl.map((item) => (
+                    <Card key={item.id} className="border border-gray-200/50 hover:shadow-md transition-shadow">
+                      <CardContent className="p-4">
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-3 mb-2">
+                              <Badge variant={item.priority === 'high' ? 'destructive' : item.priority === 'medium' ? 'default' : 'secondary'}>
+                                {item.priority}
+                              </Badge>
+                              <Badge variant={item.status === 'active' ? 'outline' : 'secondary'}>
+                                {item.status}
+                              </Badge>
+                            </div>
+                            <p className="text-gray-900 font-medium">{item.text}</p>
+                            <div className="flex items-center space-x-4 text-sm text-gray-500 mt-2">
+                              <span>{item.date}</span>
+                              <Badge variant="outline">{item.category}</Badge>
+                              <span>Duration: {item.duration}s</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => openEditDialog(item, "news")}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="destructive" 
+                              size="sm"
+                              onClick={() => openDeleteDialog(item, "news")}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Publications Management */}
+          <TabsContent value="publications">
+            <Card className="bg-white/50 backdrop-blur-sm border-0 shadow-lg">
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle className="flex items-center space-x-2">
+                      <FileText className="h-5 w-5 text-purple-600" />
+                      <span>Publications Management</span>
+                    </CardTitle>
+                    <CardDescription>Manage research papers and academic publications</CardDescription>
+                  </div>
+                  <Button onClick={() => {
+                    setItemType("publications");
+                    setIsAddDialogOpen(true);
+                  }} className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Publication
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {publications.map((pub) => (
+                    <Card key={pub.id} className="border border-gray-200/50 hover:shadow-md transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="flex justify-between items-start mb-3">
+                          <div>
+                            <h3 className="font-semibold text-lg text-gray-900">{pub.title}</h3>
+                            <p className="text-gray-600 text-sm">{pub.authors}</p>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => openEditDialog(pub, "publications")}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="destructive" 
+                              size="sm"
+                              onClick={() => openDeleteDialog(pub, "publications")}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-500 mb-4">
+                          <div>
+                            <span className="font-medium">Journal:</span> {pub.journal}
+                          </div>
+                          <div>
+                            <span className="font-medium">Year:</span> {pub.year}
+                          </div>
+                          <div>
+                            <span className="font-medium">Volume:</span> {pub.volume}
+                          </div>
+                          <div>
+                            <span className="font-medium">Pages:</span> {pub.pages}
+                          </div>
+                        </div>
+                        
+                        <p className="text-gray-600 mb-4 text-sm">{pub.abstract}</p>
+                        
+                        <div className="flex items-center justify-between">
+                          <div className="flex flex-wrap gap-2">
+                            {pub.keywords?.map((keyword, i) => (
+                              <Badge key={i} variant="secondary" className="text-xs">
+                                {keyword}
+                              </Badge>
+                            ))}
+                          </div>
+                          <Badge variant="outline" className="text-xs">
+                            DOI: {pub.doi}
+                          </Badge>
                         </div>
                         
                         <Separator className="my-4" />
                         
                         <InteractionTracker
-                          itemType="news"
-                          itemId={article.id}
+                          itemType="publication"
+                          itemId={pub.id}
                           interactions={{
-                            views: article.views,
-                            likes: article.likes,
-                            comments: article.comments
+                            views: pub.views,
+                            likes: pub.likes,
+                            comments: pub.comments
                           }}
                           onUpdateInteractions={(interactions) => {
-                            setArticles(prev => prev.map(a => 
-                              a.id === article.id ? { ...a, ...interactions } : a
+                            setPublications(prev => prev.map(p => 
+                              p.id === pub.id ? { ...p, ...interactions } : p
                             ));
                           }}
                           isAdmin={true}
@@ -1201,41 +1861,182 @@ const Admin = () => {
               </CardContent>
             </Card>
           </TabsContent>
-
-          {/* Continue with other tab contents... */}
-          {/* For brevity, I'll include the essential structure for other tabs */}
-          
-          <TabsContent value="news">
-            {/* News Crawl Management */}
-          </TabsContent>
-          
-          <TabsContent value="publications">
-            {/* Publications Management */}
-          </TabsContent>
-          
-          <TabsContent value="teaching">
-            {/* Teaching Management */}
-          </TabsContent>
-          
-          <TabsContent value="become-tv">
-            {/* Become TV Management */}
-          </TabsContent>
-          
-          <TabsContent value="agricultural">
-            {/* Agricultural Content Management */}
-          </TabsContent>
-          
-          <TabsContent value="education">
-            {/* Education Content Management */}
-          </TabsContent>
         </Tabs>
       </div>
 
-      {/* Add Item Dialog */}
+      {/* Enhanced Add Item Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">Add New {itemType}</DialogTitle>
+          </DialogHeader>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 py-4">
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="title" className="text-sm font-semibold">Title *</Label>
+                <Input
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleFormChange}
+                  placeholder="Enter title"
+                  className="mt-1"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="description" className="text-sm font-semibold">Description</Label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleFormChange}
+                  placeholder="Brief description"
+                  rows={3}
+                  className="mt-1"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="content" className="text-sm font-semibold">Content</Label>
+                <Textarea
+                  id="content"
+                  name="content"
+                  value={formData.content}
+                  onChange={handleFormChange}
+                  placeholder="Full content"
+                  rows={6}
+                  className="mt-1"
+                />
+              </div>
+
+              {(itemType === "teaching" || itemType === "education") && (
+                <div>
+                  <Label htmlFor="level" className="text-sm font-semibold">Level *</Label>
+                  <Select value={formData.level} onValueChange={(value) => setFormData({...formData, level: value as "Beginner" | "Intermediate" | "Advanced"})}>
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Select level" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Beginner">Beginner</SelectItem>
+                      <SelectItem value="Intermediate">Intermediate</SelectItem>
+                      <SelectItem value="Advanced">Advanced</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {itemType === "advertisements" && (
+                <>
+                  <div>
+                    <Label htmlFor="targetAudience" className="text-sm font-semibold">Target Audience</Label>
+                    <Input
+                      id="targetAudience"
+                      name="targetAudience"
+                      value={formData.targetAudience}
+                      onChange={handleFormChange}
+                      placeholder="e.g., Business Owners, Students"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="budget" className="text-sm font-semibold">Budget ($)</Label>
+                    <Input
+                      id="budget"
+                      name="budget"
+                      type="number"
+                      value={formData.budget}
+                      onChange={handleFormChange}
+                      placeholder="Advertisement budget"
+                      className="mt-1"
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="category" className="text-sm font-semibold">Category</Label>
+                <Select value={formData.category} onValueChange={(value) => setFormData({...formData, category: value})}>
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="politics">Politics</SelectItem>
+                    <SelectItem value="business">Business</SelectItem>
+                    <SelectItem value="technology">Technology</SelectItem>
+                    <SelectItem value="science">Science</SelectItem>
+                    <SelectItem value="health">Health</SelectItem>
+                    <SelectItem value="sports">Sports</SelectItem>
+                    <SelectItem value="entertainment">Entertainment</SelectItem>
+                    <SelectItem value="education">Education</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <Label htmlFor="tags" className="text-sm font-semibold">Tags</Label>
+                <Input
+                  id="tags"
+                  name="tags"
+                  value={formData.tags}
+                  onChange={handleFormChange}
+                  placeholder="Comma-separated tags"
+                  className="mt-1"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="date" className="text-sm font-semibold">Date *</Label>
+                <Input
+                  id="date"
+                  name="date"
+                  type="date"
+                  value={formData.date}
+                  onChange={handleFormChange}
+                  className="mt-1"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="author" className="text-sm font-semibold">Author</Label>
+                <Input
+                  id="author"
+                  name="author"
+                  value={formData.author}
+                  onChange={handleFormChange}
+                  placeholder="Author name"
+                  className="mt-1"
+                />
+              </div>
+
+              <MediaUpload
+                label="Media Files"
+                accept="image/*,video/*,application/pdf"
+                onFilesSelect={handleMediaSelect}
+                multiple={true}
+                maxFiles={10}
+              />
+            </div>
+          </div>
+          
+          <div className="flex justify-end space-x-3 pt-6 border-t">
+            <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleAddItem} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+              Create {itemType}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Item Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">Edit {itemType}</DialogTitle>
           </DialogHeader>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
             <div className="space-y-4">
@@ -1420,24 +2221,6 @@ const Admin = () => {
             </div>
           </div>
           
-          <div className="flex justify-end space-x-3 pt-6 border-t">
-            <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleAddItem} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-              Create {itemType}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Edit Item Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold">Edit {itemType}</DialogTitle>
-          </DialogHeader>
-          {/* Similar form structure as Add Dialog */}
           <div className="flex justify-end space-x-3 pt-6 border-t">
             <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
               Cancel
