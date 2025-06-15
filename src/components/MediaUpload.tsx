@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Upload, X, File, Image as ImageIcon, Video, FileText, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 export interface MediaFile {
   id: string;
-  file: File;
+  file?: File; // Made optional to handle existing files from DB
   type: 'image' | 'video' | 'pdf';
   url: string;
   name: string;
@@ -30,7 +30,13 @@ const MediaUpload = ({
   maxFiles = 10 
 }: MediaUploadProps) => {
   const [dragActive, setDragActive] = useState(false);
-  const [selectedFiles, setSelectedFiles] = useState<MediaFile[]>(existingFiles);
+  const [selectedFiles, setSelectedFiles] = useState<MediaFile[]>([]);
+
+  useEffect(() => {
+    // This effect synchronizes the component's state with existingFiles prop
+    // It handles cases where files are loaded from a database
+    setSelectedFiles(existingFiles.map(ef => ({ ...ef, id: ef.id || Date.now().toString() })));
+  }, [existingFiles]);
 
   const getFileType = (file: File): 'image' | 'video' | 'pdf' => {
     if (file.type.startsWith('image/')) return 'image';
@@ -166,13 +172,13 @@ const MediaUpload = ({
                 <div className="border border-gray-200 rounded-lg overflow-hidden bg-white hover:shadow-md transition-shadow">
                   {/* File Preview */}
                   <div className="aspect-video bg-gray-50 flex items-center justify-center">
-                    {file.type === 'image' ? (
+                    {file.type === 'image' && file.url ? (
                       <img
                         src={file.url}
                         alt={file.name}
                         className="w-full h-full object-cover"
                       />
-                    ) : file.type === 'video' ? (
+                    ) : file.type === 'video' && file.url ? (
                       <div className="flex flex-col items-center space-y-2">
                         <Video className="h-8 w-8 text-blue-500" />
                         <video
@@ -183,8 +189,8 @@ const MediaUpload = ({
                       </div>
                     ) : (
                       <div className="flex flex-col items-center space-y-2">
-                        <FileText className="h-8 w-8 text-red-500" />
-                        <span className="text-xs text-gray-500">PDF Document</span>
+                        {getFileIcon(file.type)}
+                        <span className="text-xs text-gray-500 px-2 text-center">{file.name}</span>
                       </div>
                     )}
                   </div>

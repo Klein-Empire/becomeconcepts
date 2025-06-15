@@ -24,6 +24,8 @@ import {
   Video as VideoIcon,
   FileText
 } from "lucide-react";
+import { db } from "@/firebase";
+import { collection, getDocs, doc, addDoc, updateDoc, deleteDoc } from "firebase/firestore";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,7 +45,7 @@ import type { EngagementData, Comment } from "@/components/EngagementTracker";
 // --- Type Definitions ---
 
 interface NewsItem {
-  id: number;
+  id: string;
   title: string;
   content: string;
   excerpt: string;
@@ -59,7 +61,7 @@ interface NewsItem {
 }
 
 interface Publication {
-  id: number;
+  id: string;
   title: string;
   author: string;
   publicationDate: string;
@@ -70,7 +72,7 @@ interface Publication {
 }
 
 interface TeachingItem {
-  id: number;
+  id: string;
   title: string;
   description: string;
   media: MediaFile[];
@@ -80,7 +82,7 @@ interface TeachingItem {
 }
 
 interface EducationItem {
-  id: number;
+  id:string;
   title: string;
   description: string;
   media: MediaFile[];
@@ -90,7 +92,7 @@ interface EducationItem {
 }
 
 interface AgriculturalItem {
-  id: number;
+  id: string;
   title: string;
   content: string;
   media: MediaFile[];
@@ -100,7 +102,7 @@ interface AgriculturalItem {
 }
 
 interface Advertisement {
-  id: number;
+  id: string;
   title: string;
   description: string;
   media: MediaFile[];
@@ -111,7 +113,7 @@ interface Advertisement {
 }
 
 interface YoutubeItem {
-  id: number;
+  id: string;
   title: string;
   description: string;
   url: string;
@@ -125,6 +127,7 @@ const AdminPage = () => {
   const [activeSection, setActiveSection] = useState("dashboard");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   // Dummy Profile Data for AdminProfile component
   const [adminProfile, setAdminProfile] = useState({
@@ -145,42 +148,42 @@ const AdminPage = () => {
   // --- Dummy Data (Corrected) ---
 
   const createDummyEngagement = (): EngagementData => ({
-    views: Math.floor(Math.random() * 5000),
-    likes: Math.floor(Math.random() * 1000),
+    views: 0,
+    likes: 0,
     comments: [],
   });
 
   const dummyNews: NewsItem[] = [
     {
-      id: 1, title: 'New Tractor Models Unveiled', content: 'Detailed content about new tractors.', excerpt: 'A quick look at the latest in agricultural machinery.', media: [], category: 'Agriculture', tags: ['machinery', 'new'], author: 'Admin', date: '2025-06-14', status: 'published', featured: true, priority: 'high', engagement: createDummyEngagement()
+      id: '1', title: 'New Tractor Models Unveiled', content: 'Detailed content about new tractors.', excerpt: 'A quick look at the latest in agricultural machinery.', media: [], category: 'Agriculture', tags: ['machinery', 'new'], author: 'Admin', date: '2025-06-14', status: 'published', featured: true, priority: 'high', engagement: createDummyEngagement()
     },
   ];
 
   const dummyPublications: Publication[] = [
-    { id: 1, title: 'The Future of Sustainable Farming', author: 'Dr. Jane Doe', publicationDate: '2025-05-20', abstract: 'An in-depth study on sustainable practices.', media: [], tags: ['sustainability', 'research'], engagement: createDummyEngagement() },
+    { id: '1', title: 'The Future of Sustainable Farming', author: 'Dr. Jane Doe', publicationDate: '2025-05-20', abstract: 'An in-depth study on sustainable practices.', media: [], tags: ['sustainability', 'research'], engagement: createDummyEngagement() },
   ];
   
   const dummyTeachings: TeachingItem[] = [
-    { id: 1, title: 'Introduction to Crop Rotation', description: 'Learn the basics of crop rotation for soil health.', media: [], level: 'Beginner', tags: ['farming', 'basics'], engagement: createDummyEngagement() },
+    { id: '1', title: 'Introduction to Crop Rotation', description: 'Learn the basics of crop rotation for soil health.', media: [], level: 'Beginner', tags: ['farming', 'basics'], engagement: createDummyEngagement() },
   ];
 
   const dummyYoutubeItems: YoutubeItem[] = [
-    { id: 1, title: 'Our Farm Tour', description: 'A virtual tour of our facilities and fields.', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', isActive: true, engagement: createDummyEngagement() },
+    { id: '1', title: 'Our Farm Tour', description: 'A virtual tour of our facilities and fields.', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', isActive: true, engagement: createDummyEngagement() },
   ];
 
   const dummyAgricultureItems: AgriculturalItem[] = [
-    { id: 1, title: 'Guide to Organic Fertilizers', content: 'Everything you need to know about organic fertilizers.', media: [], category: 'Soil Health', tags: ['organic', 'fertilizers'], engagement: createDummyEngagement() },
+    { id: '1', title: 'Guide to Organic Fertilizers', content: 'Everything you need to know about organic fertilizers.', media: [], category: 'Soil Health', tags: ['organic', 'fertilizers'], engagement: createDummyEngagement() },
   ];
 
   const dummyEducationItems: EducationItem[] = [
-    { id: 1, title: 'Advanced Soil Science', description: 'A deep dive into soil composition and health.', media: [], level: 'Advanced', subject: 'Agronomy', engagement: createDummyEngagement() },
+    { id: '1', title: 'Advanced Soil Science', description: 'A deep dive into soil composition and health.', media: [], level: 'Advanced', subject: 'Agronomy', engagement: createDummyEngagement() },
   ];
 
   const dummyAdvertisements: Advertisement[] = [
-    { id: 1, title: 'Harvest Season Sale', description: 'Get the best deals on farming equipment.', media: [], client: 'AgriCorp', startDate: '2025-07-01', endDate: '2025-07-31', engagement: createDummyEngagement() },
+    { id: '1', title: 'Harvest Season Sale', description: 'Get the best deals on farming equipment.', media: [], client: 'AgriCorp', startDate: '2025-07-01', endDate: '2025-07-31', engagement: createDummyEngagement() },
   ];
 
-  // --- State Management ---
+  // --- State Management (initialized as empty arrays) ---
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
   const [publications, setPublications] = useState<Publication[]>([]);
   const [teachingItems, setTeachingItems] = useState<TeachingItem[]>([]);
@@ -191,55 +194,35 @@ const AdminPage = () => {
 
   // --- Form State ---
   const [formState, setFormState] = useState<any>({});
-  const [isEditing, setIsEditing] = useState<number | null>(null);
+  const [isEditing, setIsEditing] = useState<string | null>(null);
 
-  // --- Data Persistence Effects ---
+  // --- Data Fetching from Firestore ---
   useEffect(() => {
-    const loadData = () => {
+    const loadData = async () => {
+      if (!isAuthenticated) return;
+      setIsLoading(true);
       try {
-        const storedNews = localStorage.getItem('newsItems');
-        setNewsItems(storedNews ? JSON.parse(storedNews) : dummyNews);
-        
-        const storedPublications = localStorage.getItem('publications');
-        setPublications(storedPublications ? JSON.parse(storedPublications) : dummyPublications);
-        
-        const storedTeachings = localStorage.getItem('teachingItems');
-        setTeachingItems(storedTeachings ? JSON.parse(storedTeachings) : dummyTeachings);
-        
-        const storedYoutube = localStorage.getItem('youtubeItems');
-        setYoutubeItems(storedYoutube ? JSON.parse(storedYoutube) : dummyYoutubeItems);
+        const fetchCollection = async (name: string) => {
+          const querySnapshot = await getDocs(collection(db, name));
+          return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        };
 
-        const storedAgriculture = localStorage.getItem('agricultureItems');
-        setAgricultureItems(storedAgriculture ? JSON.parse(storedAgriculture) : dummyAgricultureItems);
+        setNewsItems(await fetchCollection('news') as NewsItem[]);
+        setPublications(await fetchCollection('publications') as Publication[]);
+        setTeachingItems(await fetchCollection('teaching') as TeachingItem[]);
+        setYoutubeItems(await fetchCollection('youtube') as YoutubeItem[]);
+        setAgricultureItems(await fetchCollection('agriculture') as AgriculturalItem[]);
+        setEducationItems(await fetchCollection('education') as EducationItem[]);
+        setAdvertisements(await fetchCollection('advertisements') as Advertisement[]);
 
-        const storedEducation = localStorage.getItem('educationItems');
-        setEducationItems(storedEducation ? JSON.parse(storedEducation) : dummyEducationItems);
-        
-        const storedAds = localStorage.getItem('advertisements');
-        setAdvertisements(storedAds ? JSON.parse(storedAds) : dummyAdvertisements);
-        
       } catch (error) {
-        console.error("Failed to load data from local storage:", error);
-        // Fallback to dummy data if parsing fails
-        setNewsItems(dummyNews);
-        setPublications(dummyPublications);
-        setTeachingItems(dummyTeachings);
-        setYoutubeItems(dummyYoutubeItems);
-        setAgricultureItems(dummyAgricultureItems);
-        setEducationItems(dummyEducationItems);
-        setAdvertisements(dummyAdvertisements);
+        console.error("Failed to load data from Firestore:", error);
+        // Handle error, e.g., show a toast notification
       }
+      setIsLoading(false);
     };
     loadData();
-  }, []);
-
-  useEffect(() => { localStorage.setItem('newsItems', JSON.stringify(newsItems)); }, [newsItems]);
-  useEffect(() => { localStorage.setItem('publications', JSON.stringify(publications)); }, [publications]);
-  useEffect(() => { localStorage.setItem('teachingItems', JSON.stringify(teachingItems)); }, [teachingItems]);
-  useEffect(() => { localStorage.setItem('youtubeItems', JSON.stringify(youtubeItems)); }, [youtubeItems]);
-  useEffect(() => { localStorage.setItem('agricultureItems', JSON.stringify(agricultureItems)); }, [agricultureItems]);
-  useEffect(() => { localStorage.setItem('educationItems', JSON.stringify(educationItems)); }, [educationItems]);
-  useEffect(() => { localStorage.setItem('advertisements', JSON.stringify(advertisements)); }, [advertisements]);
+  }, [isAuthenticated]);
   
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -257,7 +240,7 @@ const AdminPage = () => {
     }
   }, []);
 
-  // --- CRUD Handlers ---
+  // --- CRUD Handlers for Firestore ---
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -274,25 +257,43 @@ const AdminPage = () => {
   
   const getCrudHandlers = (items: any[], setItems: React.Dispatch<React.SetStateAction<any[]>>, itemType: string) => {
     
-    const defaultValues: any = {
-      news: { title: '', content: '', excerpt: '', media: [], category: '', tags: '', author: '', date: '', status: 'draft', featured: false, priority: 'low', engagement: createDummyEngagement() },
-      publications: { title: '', author: '', publicationDate: '', abstract: '', media: [], tags: '', engagement: createDummyEngagement() },
-      teaching: { title: '', description: '', media: [], level: 'Beginner', tags: '', engagement: createDummyEngagement() },
-      youtube: { title: '', description: '', url: '', isActive: true, engagement: createDummyEngagement() },
-      agriculture: { title: '', content: '', media: [], category: '', tags: '', engagement: createDummyEngagement() },
-      education: { title: '', description: '', media: [], level: 'Beginner', subject: '', engagement: createDummyEngagement() },
-      advertisements: { title: '', description: '', media: [], client: '', startDate: '', endDate: '', engagement: createDummyEngagement() }
+    const collectionNameMap: { [key: string]: string } = {
+        news: 'news',
+        publications: 'publications',
+        teaching: 'teaching',
+        youtube: 'youtube',
+        agriculture: 'agriculture',
+        education: 'education',
+        advertisements: 'advertisements'
     };
-    
-    const handleCreateOrUpdate = () => {
-      const tags = typeof formState.tags === 'string' ? formState.tags.split(',').map((t: string) => t.trim()) : formState.tags || [];
+    const collectionName = collectionNameMap[itemType];
 
-      if (isEditing !== null) {
+    const handleCreateOrUpdate = async () => {
+      if (!collectionName) return;
+
+      const tags = typeof formState.tags === 'string' ? formState.tags.split(',').map((t: string) => t.trim()) : formState.tags || [];
+      
+      const mediaToStore = (formState.media || []).map((mf: MediaFile) => ({
+        name: mf.name,
+        size: mf.size,
+        type: mf.type,
+        // In a real app, you'd get the URL from Firebase Storage after upload
+        // For now, we save existing URLs and clear blob URLs for new files
+        url: mf.url && !mf.url.startsWith('blob:') ? mf.url : '', 
+      }));
+      
+      const dataToSave = { ...formState, tags, media: mediaToStore };
+      delete dataToSave.id; // Don't save ID in the document data
+
+      if (isEditing) {
         // Update
+        const itemRef = doc(db, collectionName, isEditing);
+        await updateDoc(itemRef, dataToSave);
         setItems(items.map(item => item.id === isEditing ? { ...item, ...formState, tags } : item));
       } else {
         // Create
-        setItems([...items, { ...defaultValues[itemType], ...formState, tags, id: Date.now() }]);
+        const docRef = await addDoc(collection(db, collectionName), { ...dataToSave, engagement: createDummyEngagement() });
+        setItems([...items, { ...dataToSave, id: docRef.id, engagement: createDummyEngagement() }]);
       }
       setFormState({});
       setIsEditing(null);
@@ -303,14 +304,19 @@ const AdminPage = () => {
       setFormState({ ...item, tags: item.tags?.join(', ') || '' });
     };
 
-    const handleDelete = (id: number) => {
+    const handleDelete = async (id: string) => {
+      if (!collectionName) return;
       if (window.confirm("Are you sure you want to delete this item?")) {
+        await deleteDoc(doc(db, collectionName, id));
         setItems(items.filter(item => item.id !== id));
       }
     };
     
-    const handleUpdateEngagement = (itemId: number, engagement: EngagementData) => {
-      setItems(items.map(item => item.id === itemId ? { ...item, engagement } : item));
+    const handleUpdateEngagement = async (itemId: string, engagement: EngagementData) => {
+        if (!collectionName) return;
+        const itemRef = doc(db, collectionName, itemId);
+        await updateDoc(itemRef, { engagement });
+        setItems(items.map(item => item.id === itemId ? { ...item, engagement } : item));
     };
 
     return { handleCreateOrUpdate, handleEdit, handleDelete, handleUpdateEngagement };
@@ -494,20 +500,22 @@ const AdminPage = () => {
         {activeSection !== "dashboard" && activeSection !== "profile" && (
           <div>
             <h1 className="text-3xl font-bold mb-6 capitalize">{activeSection} Management</h1>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div>
-                <h2 className="text-xl font-semibold mb-4">{isEditing ? 'Edit Item' : 'Create New Item'}</h2>
-                <Card>
-                  <CardContent className="p-6">
-                    {renderForm(activeSection)}
-                  </CardContent>
-                </Card>
+            {isLoading ? <p>Loading content...</p> : (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div>
+                  <h2 className="text-xl font-semibold mb-4">{isEditing ? 'Edit Item' : 'Create New Item'}</h2>
+                  <Card>
+                    <CardContent className="p-6">
+                      {renderForm(activeSection)}
+                    </CardContent>
+                  </Card>
+                </div>
+                <div>
+                  <h2 className="text-xl font-semibold mb-4">Existing Items</h2>
+                  {renderList(activeSection)}
+                </div>
               </div>
-              <div>
-                <h2 className="text-xl font-semibold mb-4">Existing Items</h2>
-                {renderList(activeSection)}
-              </div>
-            </div>
+            )}
           </div>
         )}
       </main>

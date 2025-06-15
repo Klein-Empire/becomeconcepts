@@ -1,9 +1,10 @@
-
 import { useState, useEffect } from "react";
 import { Youtube, Eye, Heart, MessageCircle, Play } from "lucide-react";
+import { db } from "@/firebase";
+import { collection, getDocs, query, where } from "firebase/firestore";
 
 interface BecomeTV {
-  id: number;
+  id: string;
   title: string;
   description: string;
   youtubeUrl: string;
@@ -15,60 +16,40 @@ interface BecomeTV {
 }
 
 const BecomeTVSection = () => {
-  const dummyVideos: BecomeTV[] = [
-    {
-      id: 1,
-      title: "Latest News Update",
-      description: "Stay updated with our latest news broadcast",
-      youtubeUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-      thumbnail: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400&h=300&fit=crop",
-      isActive: true,
-      views: 1500,
-      likes: 89,
-      comments: []
-    },
-    {
-      id: 2,
-      title: "Weekly Business Report",
-      description: "Comprehensive analysis of this week's business trends",
-      youtubeUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-      thumbnail: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop",
-      isActive: true,
-      views: 2340,
-      likes: 156,
-      comments: []
-    }
-  ];
-
   const [videos, setVideos] = useState<BecomeTV[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    try {
-      const storedVideos = localStorage.getItem('youtubeItems');
-      if (storedVideos) {
-        const adminVideos = JSON.parse(storedVideos);
-        const formattedVideos: BecomeTV[] = adminVideos.map((video: any) => ({
-          id: video.id,
-          title: video.title,
-          description: video.description,
-          youtubeUrl: video.url,
-          isActive: video.isActive !== undefined ? video.isActive : true,
-          views: video.engagement?.views || 0,
-          likes: video.engagement?.likes || 0,
-          comments: video.engagement?.comments || [],
-          thumbnail: video.thumbnail,
-        }));
-        setVideos(formattedVideos);
-      } else {
-        setVideos(dummyVideos);
+    const fetchVideos = async () => {
+      setLoading(true);
+      try {
+        const videosCollection = collection(db, "youtube");
+        const q = query(videosCollection, where("isActive", "==", true));
+        const querySnapshot = await getDocs(q);
+        
+        const fetchedVideos: BecomeTV[] = querySnapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            title: data.title,
+            description: data.description,
+            youtubeUrl: data.url,
+            isActive: data.isActive,
+            views: data.engagement?.views || 0,
+            likes: data.engagement?.likes || 0,
+            comments: data.engagement?.comments || [],
+            thumbnail: data.thumbnail,
+          };
+        });
+        setVideos(fetchedVideos);
+      } catch (error) {
+        console.error("Failed to load videos from Firestore:", error);
       }
-    } catch (error) {
-      console.error("Failed to load videos from local storage:", error);
-      setVideos(dummyVideos);
-    }
-  }, []);
+      setLoading(false);
+    };
 
-  const activeVideos = videos.filter(video => video.isActive);
+    fetchVideos();
+  }, []);
 
   const getYouTubeVideoId = (url: string) => {
     const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/);
@@ -79,6 +60,14 @@ const BecomeTVSection = () => {
     window.open(youtubeUrl, '_blank');
   };
 
+  if (loading) {
+    return (
+        <div className="bg-white rounded-lg shadow-md p-6 mb-8 text-center">
+            <p>Loading Videos...</p>
+        </div>
+    );
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mb-8">
       <div className="flex items-center space-x-2 mb-4">
@@ -86,9 +75,9 @@ const BecomeTVSection = () => {
         <h3 className="text-lg font-bold text-slate-900">Become TV</h3>
       </div>
       
-      {activeVideos.length > 0 ? (
+      {videos.length > 0 ? (
         <div className="space-y-4">
-          {activeVideos.map((video) => (
+          {videos.map((video) => (
             <div key={video.id} className="border border-slate-100 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
               <div 
                 className="relative cursor-pointer group"
