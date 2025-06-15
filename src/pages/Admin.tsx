@@ -355,12 +355,43 @@ const AdminPage = () => {
             <Button onClick={newsCrud.handleCreateOrUpdate}>{isEditing ? 'Update' : 'Create'} News</Button>
           </div>
         );
+      case 'publications':
+        return (
+            <div className="space-y-4">
+                <Input name="title" placeholder="Title" value={formState.title || ''} onChange={handleInputChange} />
+                <Input name="author" placeholder="Author" value={formState.author || ''} onChange={handleInputChange} />
+                <Input name="publicationDate" type="date" placeholder="Publication Date" value={formState.publicationDate || ''} onChange={handleInputChange} />
+                <Textarea name="abstract" placeholder="Abstract" value={formState.abstract || ''} onChange={handleInputChange} />
+                <Input name="tags" placeholder="Tags (comma-separated)" value={formState.tags || ''} onChange={handleInputChange} />
+                <MediaUpload label="Media" accept="image/*,video/*,application/pdf" onFilesSelect={handleFileSelect} existingFiles={formState.media || []} />
+                <Button onClick={pubCrud.handleCreateOrUpdate}>{isEditing ? 'Update' : 'Create'} Publication</Button>
+            </div>
+        );
+      case 'teaching':
+        return (
+            <div className="space-y-4">
+                <Input name="title" placeholder="Title" value={formState.title || ''} onChange={handleInputChange} />
+                <Textarea name="description" placeholder="Description" value={formState.description || ''} onChange={handleInputChange} />
+                <Select name="level" value={formState.level || ''} onValueChange={(value) => handleSelectChange('level', value)}>
+                    <SelectTrigger><SelectValue placeholder="Level" /></SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="Beginner">Beginner</SelectItem>
+                        <SelectItem value="Intermediate">Intermediate</SelectItem>
+                        <SelectItem value="Advanced">Advanced</SelectItem>
+                    </SelectContent>
+                </Select>
+                <Input name="tags" placeholder="Tags (comma-separated)" value={formState.tags || ''} onChange={handleInputChange} />
+                <MediaUpload label="Media" accept="image/*,video/*,application/pdf" onFilesSelect={handleFileSelect} existingFiles={formState.media || []} />
+                <Button onClick={teachingCrud.handleCreateOrUpdate}>{isEditing ? 'Update' : 'Create'} Teaching Item</Button>
+            </div>
+        );
       case 'youtube':
         return (
           <div className="space-y-4">
             <Input name="title" placeholder="Video Title" value={formState.title || ''} onChange={handleInputChange} />
             <Textarea name="description" placeholder="Description" value={formState.description || ''} onChange={handleInputChange} />
             <Input name="url" placeholder="YouTube URL" value={formState.url || ''} onChange={handleInputChange} />
+            <Input name="thumbnail" placeholder="Custom Thumbnail URL (optional)" value={formState.thumbnail || ''} onChange={handleInputChange} />
             <div className="flex items-center space-x-2">
               <input type="checkbox" name="isActive" id="isActive" checked={formState.isActive === undefined ? true : formState.isActive} onChange={(e) => setFormState({...formState, isActive: e.target.checked})} />
               <label htmlFor="isActive">Is Active</label>
@@ -368,7 +399,47 @@ const AdminPage = () => {
             <Button onClick={youtubeCrud.handleCreateOrUpdate}>{isEditing ? 'Update' : 'Create'} Video</Button>
           </div>
         );
-       // Add other cases for publications, teaching, etc. following the same pattern
+      case 'agriculture':
+        return (
+            <div className="space-y-4">
+                <Input name="title" placeholder="Title" value={formState.title || ''} onChange={handleInputChange} />
+                <Textarea name="content" placeholder="Content" value={formState.content || ''} onChange={handleInputChange} />
+                <Input name="category" placeholder="Category" value={formState.category || ''} onChange={handleInputChange} />
+                <Input name="tags" placeholder="Tags (comma-separated)" value={formState.tags || ''} onChange={handleInputChange} />
+                <MediaUpload label="Media" accept="image/*,video/*,application/pdf" onFilesSelect={handleFileSelect} existingFiles={formState.media || []} />
+                <Button onClick={agriCrud.handleCreateOrUpdate}>{isEditing ? 'Update' : 'Create'} Agriculture Item</Button>
+            </div>
+        );
+      case 'education':
+        return (
+            <div className="space-y-4">
+                <Input name="title" placeholder="Title" value={formState.title || ''} onChange={handleInputChange} />
+                <Textarea name="description" placeholder="Description" value={formState.description || ''} onChange={handleInputChange} />
+                <Input name="subject" placeholder="Subject" value={formState.subject || ''} onChange={handleInputChange} />
+                <Select name="level" value={formState.level || ''} onValueChange={(value) => handleSelectChange('level', value)}>
+                    <SelectTrigger><SelectValue placeholder="Level" /></SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="Beginner">Beginner</SelectItem>
+                        <SelectItem value="Intermediate">Intermediate</SelectItem>
+                        <SelectItem value="Advanced">Advanced</SelectItem>
+                    </SelectContent>
+                </Select>
+                <MediaUpload label="Media" accept="image/*,video/*,application/pdf" onFilesSelect={handleFileSelect} existingFiles={formState.media || []} />
+                <Button onClick={eduCrud.handleCreateOrUpdate}>{isEditing ? 'Update' : 'Create'} Education Item</Button>
+            </div>
+        );
+      case 'advertisements':
+        return (
+            <div className="space-y-4">
+                <Input name="title" placeholder="Title" value={formState.title || ''} onChange={handleInputChange} />
+                <Textarea name="description" placeholder="Description" value={formState.description || ''} onChange={handleInputChange} />
+                <Input name="client" placeholder="Client" value={formState.client || ''} onChange={handleInputChange} />
+                <Input name="startDate" type="date" placeholder="Start Date" value={formState.startDate || ''} onChange={handleInputChange} />
+                <Input name="endDate" type="date" placeholder="End Date" value={formState.endDate || ''} onChange={handleInputChange} />
+                <MediaUpload label="Media" accept="image/*,video/*,application/pdf" onFilesSelect={handleFileSelect} existingFiles={formState.media || []} />
+                <Button onClick={adCrud.handleCreateOrUpdate}>{isEditing ? 'Update' : 'Create'} Advertisement</Button>
+            </div>
+        );
       default:
         return <p>Select a section to manage content.</p>;
     }
