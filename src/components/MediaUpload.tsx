@@ -1,10 +1,9 @@
-
 import { useState } from "react";
 import { Upload, X, File, Image as ImageIcon, Video, FileText, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-interface MediaFile {
+export interface MediaFile {
   id: string;
   file: File;
   type: 'image' | 'video' | 'pdf';

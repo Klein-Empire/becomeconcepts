@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 
-interface Comment {
+export interface Comment {
   id: number;
   author: string;
   content: string;
@@ -16,7 +16,7 @@ interface Comment {
   replies?: Comment[];
 }
 
-interface EngagementData {
+export interface EngagementData {
   views: number;
   likes: number;
   comments: Comment[];
