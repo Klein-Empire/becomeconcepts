@@ -273,23 +273,38 @@ const AdminPage = () => {
 
       const tags = typeof formState.tags === 'string' ? formState.tags.split(',').map((t: string) => t.trim()) : formState.tags || [];
       
-      const mediaToStore = (formState.media || []).map((mf: MediaFile) => ({
-        name: mf.name,
-        size: mf.size,
-        type: mf.type,
-        // In a real app, you'd get the URL from Firebase Storage after upload
-        // For now, we save existing URLs and clear blob URLs for new files
-        url: mf.url && !mf.url.startsWith('blob:') ? mf.url : '', 
-      }));
-      
-      const dataToSave = { ...formState, tags, media: mediaToStore };
+      const dataToSave: any = { ...formState, tags };
       delete dataToSave.id; // Don't save ID in the document data
 
+      if (itemType === 'youtube') {
+          const thumbnailFile = (formState.media || [])[0];
+          if (thumbnailFile) {
+              dataToSave.thumbnail = thumbnailFile.url && !thumbnailFile.url.startsWith('blob:') ? thumbnailFile.url : '';
+          } else {
+              delete dataToSave.thumbnail;
+          }
+          delete dataToSave.media;
+      } else {
+          const mediaToStore = (formState.media || []).map((mf: MediaFile) => ({
+              name: mf.name,
+              size: mf.size,
+              type: mf.type,
+              url: mf.url && !mf.url.startsWith('blob:') ? mf.url : '', 
+          }));
+          dataToSave.media = mediaToStore;
+      }
+      
       if (isEditing) {
         // Update
         const itemRef = doc(db, collectionName, isEditing);
+        const originalItem = items.find(i => i.id === isEditing);
+
+        if (itemType === 'youtube' && dataToSave.thumbnail === '' && originalItem?.thumbnail) {
+            dataToSave.thumbnail = originalItem.thumbnail;
+        }
+
         await updateDoc(itemRef, dataToSave);
-        setItems(items.map(item => item.id === isEditing ? { ...item, ...formState, tags } : item));
+        setItems(items.map(item => item.id === isEditing ? { ...originalItem, ...dataToSave } : item));
       } else {
         // Create
         const docRef = await addDoc(collection(db, collectionName), { ...dataToSave, engagement: createDummyEngagement() });
@@ -301,7 +316,17 @@ const AdminPage = () => {
 
     const handleEdit = (item: any) => {
       setIsEditing(item.id);
-      setFormState({ ...item, tags: item.tags?.join(', ') || '' });
+      const stateToSet: any = { ...item, tags: item.tags?.join(', ') || '' };
+      if (itemType === 'youtube' && item.thumbnail) {
+          stateToSet.media = [{
+              id: 'thumb-' + item.id,
+              name: 'thumbnail.jpg',
+              type: 'image',
+              url: item.thumbnail,
+              size: 0,
+          }];
+      }
+      setFormState(stateToSet);
     };
 
     const handleDelete = async (id: string) => {
@@ -391,7 +416,14 @@ const AdminPage = () => {
             <Input name="title" placeholder="Video Title" value={formState.title || ''} onChange={handleInputChange} />
             <Textarea name="description" placeholder="Description" value={formState.description || ''} onChange={handleInputChange} />
             <Input name="url" placeholder="YouTube URL" value={formState.url || ''} onChange={handleInputChange} />
-            <Input name="thumbnail" placeholder="Custom Thumbnail URL (optional)" value={formState.thumbnail || ''} onChange={handleInputChange} />
+            <MediaUpload
+              label="Custom Thumbnail"
+              accept="image/*"
+              onFilesSelect={handleFileSelect}
+              existingFiles={formState.media || []}
+              multiple={false}
+              maxFiles={1}
+            />
             <div className="flex items-center space-x-2">
               <input type="checkbox" name="isActive" id="isActive" checked={formState.isActive === undefined ? true : formState.isActive} onChange={(e) => setFormState({...formState, isActive: e.target.checked})} />
               <label htmlFor="isActive">Is Active</label>
