@@ -4,11 +4,7 @@ import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Youtube } from "luci
 const Footer = () => {
   const currentYear = new Date().getFullYear();
   
-  const footerSections = {
-    news: ["Politics", "Business", "Technology", "Sports", "Entertainment", "Health", "Agricultural", "Education"],
-    company: ["About Us", "Contact", "Careers", "Press Kit", "Terms of Service", "Privacy Policy"],
-    services: ["Newsletter", "RSS Feed", "Mobile App", "Advertising", "Partnerships", "Submit News"]
-  };
+  const companyLinks = ["About Us", "Contact", "Terms of Service", "Privacy Policy"];
 
   const handleEmailClick = () => {
     window.location.href = "mailto:news@becomeconcepts.com?subject=Inquiry from BecomeConcepts Website";
@@ -17,13 +13,10 @@ const Footer = () => {
   return (
     <footer className="bg-slate-900 text-white">
       <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Brand Section */}
-          <div className="lg:col-span-1">
+          <div>
             <h3 className="text-2xl font-bold mb-4">BecomeConcept</h3>
-            <p className="text-slate-300 mb-6 text-sm leading-relaxed">
-              Your trusted source for breaking news, in-depth analysis, and comprehensive coverage of global events.
-            </p>
             <div className="space-y-2">
               <div 
                 className="flex items-center space-x-2 text-sm text-slate-300 cursor-pointer hover:text-white transition-colors"
@@ -43,39 +36,11 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* News Categories */}
-          <div>
-            <h4 className="text-lg font-semibold mb-4">News Categories</h4>
-            <ul className="space-y-2">
-              {footerSections.news.map(item => (
-                <li key={item}>
-                  <a href="#" className="text-slate-300 hover:text-white text-sm transition-colors">
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
           {/* Company */}
           <div>
             <h4 className="text-lg font-semibold mb-4">Company</h4>
             <ul className="space-y-2">
-              {footerSections.company.map(item => (
-                <li key={item}>
-                  <a href="#" className="text-slate-300 hover:text-white text-sm transition-colors">
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Services */}
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Services</h4>
-            <ul className="space-y-2">
-              {footerSections.services.map(item => (
+              {companyLinks.map(item => (
                 <li key={item}>
                   <a href="#" className="text-slate-300 hover:text-white text-sm transition-colors">
                     {item}
