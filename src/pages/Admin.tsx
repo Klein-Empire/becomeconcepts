@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import {
   LayoutDashboard,
@@ -126,6 +125,22 @@ const AdminPage = () => {
   const [activeSection, setActiveSection] = useState("dashboard");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
+
+  // Dummy Profile Data for AdminProfile component
+  const [adminProfile, setAdminProfile] = useState({
+    name: 'Admin User',
+    email: 'admin@newsdaily.com',
+    role: 'Administrator',
+    avatar: 'https://i.pravatar.cc/150?u=admin',
+    whatsappNumber: '+254712345678',
+    bio: 'Overseeing the content and operations of NewsDaily.',
+  });
+
+  const handleUpdateProfile = (updatedProfile: any) => {
+    setAdminProfile(updatedProfile);
+    // In a real application, you'd likely save this to a backend.
+    console.log("Profile updated:", updatedProfile);
+  };
 
   // --- Dummy Data (Corrected) ---
 
@@ -474,7 +489,7 @@ const AdminPage = () => {
           </div>
         )}
         
-        {activeSection === "profile" && <AdminProfile />}
+        {activeSection === "profile" && <AdminProfile profile={adminProfile} onUpdateProfile={handleUpdateProfile} />}
         
         {activeSection !== "dashboard" && activeSection !== "profile" && (
           <div>
