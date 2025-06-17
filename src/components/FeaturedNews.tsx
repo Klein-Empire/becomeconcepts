@@ -9,7 +9,7 @@ const FeaturedNews = () => {
       title: "Global Markets Show Strong Recovery Signs",
       excerpt: "Financial analysts report positive trends across major exchanges as investor confidence returns.",
       category: "Business",
-      image: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=400&h=300&fit=crop",
+      image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=300&fit=crop",
       time: "3 hours ago",
       author: "Sarah Johnson"
     },
@@ -17,8 +17,8 @@ const FeaturedNews = () => {
       id: 3,
       title: "Climate Summit Reaches Historic Agreement",
       excerpt: "World leaders unite on ambitious climate goals with concrete action plans for the next decade.",
-      category: "World",
-      image: "https://images.unsplash.com/photo-1500673922987-e212871fec22?w=400&h=300&fit=crop",
+      category: "My Story",
+      image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=300&fit=crop",
       time: "5 hours ago",
       author: "Michael Chen"
     },

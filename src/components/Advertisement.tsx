@@ -24,7 +24,7 @@ const Advertisement = ({ type, className = "" }: AdvertisementProps) => {
       id: 1,
       title: "Professional Web Development",
       description: "Build your dream website with our expert team",
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=200&fit=crop",
+      image: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=200&fit=crop",
       link: "https://example.com",
       type: 'banner',
       isActive: true
@@ -33,7 +33,7 @@ const Advertisement = ({ type, className = "" }: AdvertisementProps) => {
       id: 2,
       title: "Learn Digital Marketing",
       description: "Master the art of digital marketing",
-      image: "https://images.unsplash.com/photo-1533750349088-cd871a92f312?w=300&h=250&fit=crop",
+      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=300&h=250&fit=crop",
       link: "https://example.com",
       type: 'sidebar',
       isActive: true
@@ -42,7 +42,7 @@ const Advertisement = ({ type, className = "" }: AdvertisementProps) => {
       id: 3,
       title: "Investment Opportunities",
       description: "Grow your wealth with smart investments",
-      video: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
+      image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=300&fit=crop",
       link: "https://example.com",
       type: 'inline',
       isActive: true

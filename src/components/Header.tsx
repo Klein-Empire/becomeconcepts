@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Menu, X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,7 @@ const Header = () => {
   // In a real app, this would come from a proper auth context
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
 
-  const categories = ["Politics", "Business", "Tech", "Sports", "Entertainment", "Health", "World", "Agricultural", "Education"];
+  const categories = ["Politics", "Business", "Tech", "Sports", "Employment", "Health", "My Story", "Agricultural", "Education"];
   
   const additionalMenuItems = [
     {
