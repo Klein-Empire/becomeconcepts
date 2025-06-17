@@ -38,36 +38,36 @@ const Sidebar = () => {
         setTrendingStories(fetchedStories);
       } catch (error) {
         console.error("Error fetching trending stories:", error);
-        // Fallback to dummy data
+        // Fallback to current Kenyan trending news
         setTrendingStories([
           {
             id: '11',
-            title: "Breaking: Major Policy Changes Announced",
+            title: "Parliament Debates New Finance Bill 2025",
             category: "Politics",
             date: new Date().toISOString().split('T')[0]
           },
           {
             id: '12',
-            title: "Tech Giant Reports Record Profits",
+            title: "KenGen Reports Record Clean Energy Production",
             category: "Business",
             date: new Date().toISOString().split('T')[0]
           },
           {
             id: '13',
-            title: "Celebrity Wedding Shocks Fans",
-            category: "Employment",
-            date: new Date().toISOString().split('T')[0]
-          },
-          {
-            id: '14',
-            title: "Scientific Breakthrough in Medicine",
+            title: "NHIF Transitions to New Digital Health Platform",
             category: "Health",
             date: new Date().toISOString().split('T')[0]
           },
           {
-            id: '15',
-            title: "Championship Team Wins Title",
+            id: '14',
+            title: "Kenyan Athletes Dominate World Championships",
             category: "Sports",
+            date: new Date().toISOString().split('T')[0]
+          },
+          {
+            id: '15',
+            title: "Youth Employment Program Creates 50,000 Jobs",
+            category: "Employment",
             date: new Date().toISOString().split('T')[0]
           }
         ]);

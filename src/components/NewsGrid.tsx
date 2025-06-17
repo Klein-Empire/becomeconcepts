@@ -6,63 +6,63 @@ const NewsGrid = () => {
   const articles = [
     {
       id: 5,
-      title: "Space Exploration Reaches New Milestone",
-      excerpt: "Private space companies achieve breakthrough in sustainable rocket technology, reducing costs by 40%.",
-      category: "Tech",
+      title: "Kenya Airways Reports 30% Increase in Passenger Traffic",
+      excerpt: "The national carrier attributes growth to new routes and improved service delivery across African destinations.",
+      category: "Business",
       image: "https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?w=400&h=300&fit=crop",
-      time: "1 hour ago",
-      author: "Alex Thompson",
+      time: "2 hours ago",
+      author: "Mary Wambui",
       comments: 24
     },
     {
       id: 6,
-      title: "Economic Growth Accelerates in Q4",
-      excerpt: "Latest quarterly reports show unprecedented growth across multiple sectors, exceeding economist predictions.",
-      category: "Business",
+      title: "Kenyan Startups Raise $200M in Venture Capital Funding",
+      excerpt: "Fintech and agritech sectors lead investment surge as international investors show confidence in Kenya's innovation ecosystem.",
+      category: "Tech",
       image: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=400&h=300&fit=crop",
-      time: "2 hours ago",
-      author: "Maria Garcia",
+      time: "4 hours ago",
+      author: "David Mwangi",
       comments: 18
     },
     {
       id: 7,
-      title: "Championship Finals Draw Record Viewership",
-      excerpt: "Sports broadcasting history made as global audience surpasses all previous records for live streaming.",
+      title: "Harambee Stars Qualify for AFCON 2025",
+      excerpt: "Kenya's national football team secures qualification after decisive victory over Uganda in final qualifying match.",
       category: "Sports",
       image: "https://images.unsplash.com/photo-1500673922987-e212871fec22?w=400&h=300&fit=crop",
-      time: "4 hours ago",
-      author: "David Kim",
-      comments: 56
+      time: "6 hours ago",
+      author: "James Ochieng",
+      comments: 156
     },
     {
       id: 8,
-      title: "Healthcare Innovation Saves Lives",
-      excerpt: "New medical device approved for emergency use, promising to revolutionize emergency medicine protocols.",
+      title: "New Malaria Vaccine Shows 85% Efficacy in Kenyan Trials",
+      excerpt: "Clinical trials conducted in Western Kenya demonstrate breakthrough results in malaria prevention among children.",
       category: "Health",
       image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=300&fit=crop",
-      time: "6 hours ago",
-      author: "Dr. Lisa Wang",
-      comments: 12
+      time: "8 hours ago",
+      author: "Dr. Faith Chepkemoi",
+      comments: 42
     },
     {
       id: 9,
-      title: "Entertainment Industry Embraces Virtual Reality",
-      excerpt: "Major studios announce massive investments in VR content creation, signaling industry transformation.",
-      category: "Entertainment",
+      title: "Teachers' Union Calls Off Strike After Government Agreement",
+      excerpt: "TSC agrees to 7-9% salary increment and improved working conditions following two-week industrial action.",
+      category: "Employment",
       image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=400&h=300&fit=crop",
-      time: "8 hours ago",
-      author: "Chris Brown",
-      comments: 33
+      time: "12 hours ago",
+      author: "Samuel Kiprotich",
+      comments: 83
     },
     {
       id: 10,
-      title: "Political Reform Bill Passes Legislature",
-      excerpt: "Landmark legislation addressing voting rights and election security receives bipartisan support.",
+      title: "Deputy President Leads Anti-Corruption Drive in Coast Region",
+      excerpt: "Government intensifies efforts to tackle corruption in public service delivery and procurement processes.",
       category: "Politics",
       image: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=300&fit=crop",
-      time: "10 hours ago",
-      author: "Jennifer Adams",
-      comments: 89
+      time: "1 day ago",
+      author: "Rose Nyong'o",
+      comments: 127
     }
   ];
 

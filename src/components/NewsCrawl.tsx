@@ -32,21 +32,28 @@ const NewsCrawl = () => {
         setCrawlNews(fetchedNews);
       } catch (error) {
         console.error("Error fetching news crawl:", error);
-        // Fallback to dummy data
+        // Fallback to current Kenyan news
         setCrawlNews([
           {
             id: '1',
-            text: "Stock markets hit record highs as tech sector surges 15%",
+            text: "Kenya's economy grows 5.2% in Q3 2024, driven by agriculture and manufacturing sectors",
             image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=50&h=50&fit=crop&crop=face",
             isActive: true,
             order: 1
           },
           {
             id: '2',
-            text: "Breaking: International climate agreement signed by 50 nations",
+            text: "President Ruto announces new affordable housing project targeting 1 million units by 2027",
             image: "https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=50&h=50&fit=crop&crop=face",
             isActive: true,
             order: 2
+          },
+          {
+            id: '3',
+            text: "Nairobi-Mombasa highway upgrade project receives KSh 50 billion funding approval",
+            image: "https://images.unsplash.com/photo-1573164574511-73c773193279?w=50&h=50&fit=crop&crop=face",
+            isActive: true,
+            order: 3
           }
         ]);
       }

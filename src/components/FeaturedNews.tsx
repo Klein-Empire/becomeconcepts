@@ -38,36 +38,36 @@ const FeaturedNews = () => {
         setFeaturedArticles(fetchedArticles);
       } catch (error) {
         console.error("Error fetching featured articles:", error);
-        // Fallback to dummy data
+        // Fallback to current Kenyan featured news
         setFeaturedArticles([
           {
             id: '2',
-            title: "Global Markets Show Strong Recovery Signs",
-            excerpt: "Financial analysts report positive trends across major exchanges as investor confidence returns.",
+            title: "Kenya Signs Multi-Billion Dollar Trade Deal with UAE",
+            excerpt: "The agreement is expected to boost bilateral trade by 40% and create thousands of jobs in both countries.",
             category: "Business",
             media: [{ url: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=300&fit=crop", type: "image" }],
             date: new Date().toISOString().split('T')[0],
-            author: "Sarah Johnson",
+            author: "John Kiprotich",
             featured: true
           },
           {
             id: '3',
-            title: "Climate Summit Reaches Historic Agreement",
-            excerpt: "World leaders unite on ambitious climate goals with concrete action plans for the next decade.",
-            category: "My Story",
+            title: "Safaricom Launches 5G Network Across Major Kenyan Cities",
+            excerpt: "The telecommunications giant expands its 5G coverage to Nairobi, Mombasa, Kisumu, and Nakuru.",
+            category: "Tech",
             media: [{ url: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=300&fit=crop", type: "image" }],
             date: new Date().toISOString().split('T')[0],
-            author: "Michael Chen",
+            author: "Grace Wanjiru",
             featured: true
           },
           {
             id: '4',
-            title: "Revolutionary AI Tool Transforms Healthcare",
-            excerpt: "New artificial intelligence system shows promise in early disease detection and treatment planning.",
-            category: "Tech",
+            title: "Kenya's Coffee Exports Hit Record High in 2024",
+            excerpt: "Farmers celebrate as international demand drives coffee prices to unprecedented levels.",
+            category: "Agriculture",
             media: [{ url: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=300&fit=crop", type: "image" }],
             date: new Date().toISOString().split('T')[0],
-            author: "Dr. Emily Rodriguez",
+            author: "Peter Macharia",
             featured: true
           }
         ]);

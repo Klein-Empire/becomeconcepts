@@ -154,7 +154,7 @@ const AdminPage = () => {
     console.log("Profile updated:", updatedProfile);
   };
 
-  // --- Dummy Data (Corrected) ---
+  // --- Dummy Data with Kenyan Context ---
 
   const createDummyEngagement = (): EngagementData => ({
     views: 0,
@@ -164,32 +164,96 @@ const AdminPage = () => {
 
   const dummyNews: NewsItem[] = [
     {
-      id: '1', title: 'New Tractor Models Unveiled', content: 'Detailed content about new tractors.', excerpt: 'A quick look at the latest in agricultural machinery.', media: [], category: 'Agriculture', tags: ['machinery', 'new'], author: 'Admin', date: '2025-06-14', status: 'published', featured: true, priority: 'high', engagement: createDummyEngagement()
+      id: '1', 
+      title: 'Kenya Launches Digital ID System Nationwide', 
+      content: 'The government has officially launched the new digital identity system across all counties, aiming to improve service delivery and reduce bureaucracy.', 
+      excerpt: 'New digital ID system promises to streamline government services for all Kenyans.', 
+      media: [], 
+      category: 'Politics', 
+      tags: ['digital-id', 'government'], 
+      author: 'Admin', 
+      date: '2025-06-17', 
+      status: 'published', 
+      featured: true, 
+      priority: 'high', 
+      engagement: createDummyEngagement()
     },
   ];
 
   const dummyPublications: Publication[] = [
-    { id: '1', title: 'The Future of Sustainable Farming', author: 'Dr. Jane Doe', publicationDate: '2025-05-20', abstract: 'An in-depth study on sustainable practices.', media: [], tags: ['sustainability', 'research'], engagement: createDummyEngagement() },
+    { 
+      id: '1', 
+      title: 'Kenya Vision 2030: Progress Report on Sustainable Development', 
+      author: 'Kenya Institute for Public Policy Research', 
+      publicationDate: '2025-05-20', 
+      abstract: 'Comprehensive analysis of Kenya\'s progress towards achieving Vision 2030 goals in agriculture, manufacturing, and services.', 
+      media: [], 
+      tags: ['vision2030', 'development'], 
+      engagement: createDummyEngagement() 
+    },
   ];
   
   const dummyTeachings: TeachingItem[] = [
-    { id: '1', title: 'Introduction to Crop Rotation', description: 'Learn the basics of crop rotation for soil health.', media: [], level: 'Beginner', tags: ['farming', 'basics'], engagement: createDummyEngagement() },
+    { 
+      id: '1', 
+      title: 'Modern Farming Techniques for Kenyan Smallholder Farmers', 
+      description: 'Learn sustainable farming practices that increase yield and income for small-scale farmers across Kenya.', 
+      media: [], 
+      level: 'Beginner', 
+      tags: ['farming', 'sustainability'], 
+      engagement: createDummyEngagement() 
+    },
   ];
 
   const dummyYoutubeItems: YoutubeItem[] = [
-    { id: '1', title: 'Our Farm Tour', description: 'A virtual tour of our facilities and fields.', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', isActive: true, engagement: createDummyEngagement() },
+    { 
+      id: '1', 
+      title: 'Kenya\'s Agricultural Success Story: From Seed to Market', 
+      description: 'Documentary showcasing successful Kenyan farmers and their journey from traditional to modern farming.', 
+      url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 
+      isActive: true, 
+      engagement: createDummyEngagement() 
+    },
   ];
 
   const dummyAgricultureItems: AgriculturalItem[] = [
-    { id: '1', title: 'Guide to Organic Fertilizers', content: 'Everything you need to know about organic fertilizers.', media: [], category: 'Soil Health', tags: ['organic', 'fertilizers'], engagement: createDummyEngagement() },
+    { 
+      id: '1', 
+      title: 'Maize Production Best Practices in Kenya', 
+      content: 'Complete guide to growing high-yield maize varieties suitable for Kenyan climate and soil conditions.', 
+      media: [], 
+      category: 'Crop Production', 
+      tags: ['maize', 'best-practices'], 
+      engagement: createDummyEngagement() 
+    },
   ];
 
   const dummyEducationItems: EducationItem[] = [
-    { id: '1', title: 'Advanced Soil Science', description: 'A deep dive into soil composition and health.', media: [], level: 'Advanced', subject: 'Agronomy', engagement: createDummyEngagement() },
+    { 
+      id: '1', 
+      title: 'Competency-Based Curriculum Implementation in Kenya', 
+      description: 'Understanding the new CBC system and its impact on primary and secondary education in Kenya.', 
+      media: [], 
+      level: 'Intermediate', 
+      subject: 'Education Policy', 
+      engagement: createDummyEngagement() 
+    },
   ];
 
   const dummyAdvertisements: Advertisement[] = [
-    { id: '1', title: 'Harvest Season Sale', description: 'Get the best deals on farming equipment.', media: [], client: 'AgriCorp', link: '', type: 'banner', startDate: '2025-07-01', endDate: '2025-07-31', isActive: true, engagement: createDummyEngagement() },
+    { 
+      id: '1', 
+      title: 'Kenya Commercial Bank - Digital Banking Solutions', 
+      description: 'Experience seamless banking with KCB\'s new mobile and internet banking platform.', 
+      media: [], 
+      client: 'Kenya Commercial Bank', 
+      link: 'https://kcbgroup.com', 
+      type: 'banner', 
+      startDate: '2025-06-01', 
+      endDate: '2025-12-31', 
+      isActive: true, 
+      engagement: createDummyEngagement() 
+    },
   ];
 
   // --- State Management (initialized as empty arrays) ---
