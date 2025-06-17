@@ -22,7 +22,8 @@ import {
   File,
   Image as ImageIcon,
   Video as VideoIcon,
-  FileText
+  FileText,
+  TrendingUp
 } from "lucide-react";
 import { db } from "@/firebase";
 import { collection, getDocs, doc, addDoc, updateDoc, deleteDoc } from "firebase/firestore";
