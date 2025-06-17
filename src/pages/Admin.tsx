@@ -9,39 +9,27 @@ import {
   School,
   Megaphone,
   Settings,
-  PlusCircle,
-  Edit,
-  Trash2,
-  ChevronDown,
-  ChevronUp,
-  BarChart2,
+  TrendingUp,
+  Briefcase,
+  Monitor,
+  Trophy,
   Users,
-  Eye,
   Heart,
-  MessageCircle,
-  File,
-  Image as ImageIcon,
-  Video as VideoIcon,
-  FileText,
-  TrendingUp
+  User
 } from "lucide-react";
 import { db } from "@/firebase";
 import { collection, getDocs, doc, addDoc, updateDoc, deleteDoc } from "firebase/firestore";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
 
 import AdminProfile from "@/components/AdminProfile";
-import MediaUpload from "@/components/MediaUpload";
-import EngagementTracker from "@/components/EngagementTracker";
+import AdminForm from "@/components/admin/AdminForm";
+import AdminList from "@/components/admin/AdminList";
 
 import type { MediaFile } from "@/components/MediaUpload";
-import type { EngagementData, Comment } from "@/components/EngagementTracker";
+import type { EngagementData } from "@/components/EngagementTracker";
 
 // --- Type Definitions ---
 
@@ -206,6 +194,13 @@ const AdminPage = () => {
 
   // --- State Management (initialized as empty arrays) ---
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
+  const [politicsItems, setPoliticsItems] = useState<NewsItem[]>([]);
+  const [businessItems, setBusinessItems] = useState<NewsItem[]>([]);
+  const [techItems, setTechItems] = useState<NewsItem[]>([]);
+  const [sportsItems, setSportsItems] = useState<NewsItem[]>([]);
+  const [employmentItems, setEmploymentItems] = useState<NewsItem[]>([]);
+  const [healthItems, setHealthItems] = useState<NewsItem[]>([]);
+  const [mystoryItems, setMystoryItems] = useState<NewsItem[]>([]);
   const [publications, setPublications] = useState<Publication[]>([]);
   const [teachingItems, setTeachingItems] = useState<TeachingItem[]>([]);
   const [youtubeItems, setYoutubeItems] = useState<YoutubeItem[]>([]);
@@ -230,7 +225,16 @@ const AdminPage = () => {
           return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         };
 
-        setNewsItems(await fetchCollection('news') as NewsItem[]);
+        const allNews = await fetchCollection('news') as NewsItem[];
+        setNewsItems(allNews.filter(item => !item.category || item.category === 'General'));
+        setPoliticsItems(allNews.filter(item => item.category === 'Politics'));
+        setBusinessItems(allNews.filter(item => item.category === 'Business'));
+        setTechItems(allNews.filter(item => item.category === 'Tech'));
+        setSportsItems(allNews.filter(item => item.category === 'Sports'));
+        setEmploymentItems(allNews.filter(item => item.category === 'Employment'));
+        setHealthItems(allNews.filter(item => item.category === 'Health'));
+        setMystoryItems(allNews.filter(item => item.category === 'My Story'));
+
         setPublications(await fetchCollection('publications') as Publication[]);
         setTeachingItems(await fetchCollection('teaching') as TeachingItem[]);
         setYoutubeItems(await fetchCollection('youtube') as YoutubeItem[]);
@@ -284,6 +288,13 @@ const AdminPage = () => {
     
     const collectionNameMap: { [key: string]: string } = {
         news: 'news',
+        politics: 'news',
+        business: 'news',
+        tech: 'news',
+        sports: 'news',
+        employment: 'news',
+        health: 'news',
+        mystory: 'news',
         publications: 'publications',
         teaching: 'teaching',
         youtube: 'youtube',
@@ -301,8 +312,15 @@ const AdminPage = () => {
       const tags = typeof formState.tags === 'string' ? formState.tags.split(',').map((t: string) => t.trim()) : formState.tags || [];
       const features = typeof formState.features === 'string' ? formState.features.split(',').map((f: string) => f.trim()) : formState.features || [];
       
-      const dataToSave: any = { ...formState, tags, features };
-      delete dataToSave.id; // Don't save ID in the document data
+      let dataToSave: any = { ...formState, tags, features };
+      
+      // Set category for news-based items
+      if (['politics', 'business', 'tech', 'sports', 'employment', 'health', 'mystory'].includes(itemType)) {
+        dataToSave.category = itemType.charAt(0).toUpperCase() + itemType.slice(1);
+        if (itemType === 'mystory') dataToSave.category = 'My Story';
+      }
+      
+      delete dataToSave.id;
 
       if (itemType === 'youtube') {
           const thumbnailFile = (formState.media || [])[0];
@@ -386,7 +404,15 @@ const AdminPage = () => {
     return { handleCreateOrUpdate, handleEdit, handleDelete, handleUpdateEngagement };
   };
 
+  // Create CRUD handlers for all sections
   const newsCrud = getCrudHandlers(newsItems, setNewsItems, 'news');
+  const politicsCrud = getCrudHandlers(politicsItems, setPoliticsItems, 'politics');
+  const businessCrud = getCrudHandlers(businessItems, setBusinessItems, 'business');
+  const techCrud = getCrudHandlers(techItems, setTechItems, 'tech');
+  const sportsCrud = getCrudHandlers(sportsItems, setSportsItems, 'sports');
+  const employmentCrud = getCrudHandlers(employmentItems, setEmploymentItems, 'employment');
+  const healthCrud = getCrudHandlers(healthItems, setHealthItems, 'health');
+  const mystoryCrud = getCrudHandlers(mystoryItems, setMystoryItems, 'mystory');
   const pubCrud = getCrudHandlers(publications, setPublications, 'publications');
   const teachingCrud = getCrudHandlers(teachingItems, setTeachingItems, 'teaching');
   const youtubeCrud = getCrudHandlers(youtubeItems, setYoutubeItems, 'youtube');
@@ -396,255 +422,38 @@ const AdminPage = () => {
   const newsCrawlCrud = getCrudHandlers(newsCrawlItems, setNewsCrawlItems, 'newsCrawl');
   const adPackageCrud = getCrudHandlers(adPackages, setAdPackages, 'adPackages');
 
-
-  const renderForm = (section: string) => {
-    switch(section) {
-      case 'news':
-        return (
-          <div className="space-y-4">
-            <Input name="title" placeholder="Title" value={formState.title || ''} onChange={handleInputChange} />
-            <Textarea name="content" placeholder="Content" value={formState.content || ''} onChange={handleInputChange} />
-            <Input name="excerpt" placeholder="Excerpt" value={formState.excerpt || ''} onChange={handleInputChange} />
-            <Input name="author" placeholder="Author" value={formState.author || ''} onChange={handleInputChange} />
-            <Input name="date" type="date" placeholder="Date" value={formState.date || ''} onChange={handleInputChange} />
-            <Select name="category" value={formState.category || ''} onValueChange={(value) => handleSelectChange('category', value)}>
-              <SelectTrigger><SelectValue placeholder="Select Category" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Politics">Politics</SelectItem>
-                <SelectItem value="Business">Business</SelectItem>
-                <SelectItem value="Tech">Tech</SelectItem>
-                <SelectItem value="Sports">Sports</SelectItem>
-                <SelectItem value="Employment">Employment</SelectItem>
-                <SelectItem value="Health">Health</SelectItem>
-                <SelectItem value="My Story">My Story</SelectItem>
-                <SelectItem value="Agricultural">Agricultural</SelectItem>
-                <SelectItem value="Education">Education</SelectItem>
-              </SelectContent>
-            </Select>
-            <Input name="tags" placeholder="Tags (comma-separated)" value={formState.tags || ''} onChange={handleInputChange} />
-            <Select name="status" value={formState.status || 'draft'} onValueChange={(value) => handleSelectChange('status', value)}>
-              <SelectTrigger><SelectValue placeholder="Status" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="draft">Draft</SelectItem>
-                <SelectItem value="published">Published</SelectItem>
-              </SelectContent>
-            </Select>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <input type="checkbox" name="featured" id="featured" checked={formState.featured || false} onChange={(e) => setFormState({...formState, featured: e.target.checked})} />
-                <label htmlFor="featured">Featured Article</label>
-              </div>
-              <Select name="priority" value={formState.priority || 'medium'} onValueChange={(value) => handleSelectChange('priority', value)}>
-                <SelectTrigger className="w-32"><SelectValue placeholder="Priority" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="low">Low</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="high">High</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <MediaUpload label="Media" accept="image/*,video/*,application/pdf" onFilesSelect={handleFileSelect} existingFiles={formState.media || []} />
-            <Button onClick={newsCrud.handleCreateOrUpdate}>{isEditing ? 'Update' : 'Create'} News Article</Button>
-          </div>
-        );
-      case 'newsCrawl':
-        return (
-          <div className="space-y-4">
-            <Input name="text" placeholder="Breaking news text" value={formState.text || ''} onChange={handleInputChange} />
-            <Input name="image" placeholder="Image URL" value={formState.image || ''} onChange={handleInputChange} />
-            <Input name="order" type="number" placeholder="Display order" value={formState.order || ''} onChange={handleInputChange} />
-            <div className="flex items-center space-x-2">
-              <input type="checkbox" name="isActive" id="crawlActive" checked={formState.isActive === undefined ? true : formState.isActive} onChange={(e) => setFormState({...formState, isActive: e.target.checked})} />
-              <label htmlFor="crawlActive">Is Active</label>
-            </div>
-            <Button onClick={newsCrawlCrud.handleCreateOrUpdate}>{isEditing ? 'Update' : 'Create'} Breaking News</Button>
-          </div>
-        );
-      case 'adPackages':
-        return (
-          <div className="space-y-4">
-            <Input name="name" placeholder="Package Name" value={formState.name || ''} onChange={handleInputChange} />
-            <Input name="price" placeholder="Price (e.g., $299)" value={formState.price || ''} onChange={handleInputChange} />
-            <Input name="period" placeholder="Period (e.g., per month)" value={formState.period || ''} onChange={handleInputChange} />
-            <Textarea name="features" placeholder="Features (comma-separated)" value={formState.features || ''} onChange={handleInputChange} />
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <input type="checkbox" name="popular" id="popular" checked={formState.popular || false} onChange={(e) => setFormState({...formState, popular: e.target.checked})} />
-                <label htmlFor="popular">Popular Package</label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <input type="checkbox" name="isActive" id="packageActive" checked={formState.isActive === undefined ? true : formState.isActive} onChange={(e) => setFormState({...formState, isActive: e.target.checked})} />
-                <label htmlFor="packageActive">Is Active</label>
-              </div>
-            </div>
-            <Button onClick={adPackageCrud.handleCreateOrUpdate}>{isEditing ? 'Update' : 'Create'} Package</Button>
-          </div>
-        );
-      case 'publications':
-        return (
-            <div className="space-y-4">
-                <Input name="title" placeholder="Title" value={formState.title || ''} onChange={handleInputChange} />
-                <Input name="author" placeholder="Author" value={formState.author || ''} onChange={handleInputChange} />
-                <Input name="publicationDate" type="date" placeholder="Publication Date" value={formState.publicationDate || ''} onChange={handleInputChange} />
-                <Textarea name="abstract" placeholder="Abstract" value={formState.abstract || ''} onChange={handleInputChange} />
-                <Input name="tags" placeholder="Tags (comma-separated)" value={formState.tags || ''} onChange={handleInputChange} />
-                <MediaUpload label="Media" accept="image/*,video/*,application/pdf" onFilesSelect={handleFileSelect} existingFiles={formState.media || []} />
-                <Button onClick={pubCrud.handleCreateOrUpdate}>{isEditing ? 'Update' : 'Create'} Publication</Button>
-            </div>
-        );
-      case 'teaching':
-        return (
-            <div className="space-y-4">
-                <Input name="title" placeholder="Title" value={formState.title || ''} onChange={handleInputChange} />
-                <Textarea name="description" placeholder="Description" value={formState.description || ''} onChange={handleInputChange} />
-                <Select name="level" value={formState.level || ''} onValueChange={(value) => handleSelectChange('level', value)}>
-                    <SelectTrigger><SelectValue placeholder="Level" /></SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="Beginner">Beginner</SelectItem>
-                        <SelectItem value="Intermediate">Intermediate</SelectItem>
-                        <SelectItem value="Advanced">Advanced</SelectItem>
-                    </SelectContent>
-                </Select>
-                <Input name="tags" placeholder="Tags (comma-separated)" value={formState.tags || ''} onChange={handleInputChange} />
-                <MediaUpload label="Media" accept="image/*,video/*,application/pdf" onFilesSelect={handleFileSelect} existingFiles={formState.media || []} />
-                <Button onClick={teachingCrud.handleCreateOrUpdate}>{isEditing ? 'Update' : 'Create'} Teaching Item</Button>
-            </div>
-        );
-      case 'youtube':
-        return (
-          <div className="space-y-4">
-            <Input name="title" placeholder="Video Title" value={formState.title || ''} onChange={handleInputChange} />
-            <Textarea name="description" placeholder="Description" value={formState.description || ''} onChange={handleInputChange} />
-            <Input name="url" placeholder="YouTube URL" value={formState.url || ''} onChange={handleInputChange} />
-            <MediaUpload
-              label="Custom Thumbnail"
-              accept="image/*"
-              onFilesSelect={handleFileSelect}
-              existingFiles={formState.media || []}
-              multiple={false}
-              maxFiles={1}
-            />
-            <div className="flex items-center space-x-2">
-              <input type="checkbox" name="isActive" id="isActive" checked={formState.isActive === undefined ? true : formState.isActive} onChange={(e) => setFormState({...formState, isActive: e.target.checked})} />
-              <label htmlFor="isActive">Is Active</label>
-            </div>
-            <Button onClick={youtubeCrud.handleCreateOrUpdate}>{isEditing ? 'Update' : 'Create'} Video</Button>
-          </div>
-        );
-      case 'agriculture':
-        return (
-            <div className="space-y-4">
-                <Input name="title" placeholder="Title" value={formState.title || ''} onChange={handleInputChange} />
-                <Textarea name="content" placeholder="Content" value={formState.content || ''} onChange={handleInputChange} />
-                <Input name="category" placeholder="Category" value={formState.category || ''} onChange={handleInputChange} />
-                <Input name="tags" placeholder="Tags (comma-separated)" value={formState.tags || ''} onChange={handleInputChange} />
-                <MediaUpload label="Media" accept="image/*,video/*,application/pdf" onFilesSelect={handleFileSelect} existingFiles={formState.media || []} />
-                <Button onClick={agriCrud.handleCreateOrUpdate}>{isEditing ? 'Update' : 'Create'} Agriculture Item</Button>
-            </div>
-        );
-      case 'education':
-        return (
-            <div className="space-y-4">
-                <Input name="title" placeholder="Title" value={formState.title || ''} onChange={handleInputChange} />
-                <Textarea name="description" placeholder="Description" value={formState.description || ''} onChange={handleInputChange} />
-                <Input name="subject" placeholder="Subject" value={formState.subject || ''} onChange={handleInputChange} />
-                <Select name="level" value={formState.level || ''} onValueChange={(value) => handleSelectChange('level', value)}>
-                    <SelectTrigger><SelectValue placeholder="Level" /></SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="Beginner">Beginner</SelectItem>
-                        <SelectItem value="Intermediate">Intermediate</SelectItem>
-                        <SelectItem value="Advanced">Advanced</SelectItem>
-                    </SelectContent>
-                </Select>
-                <MediaUpload label="Media" accept="image/*,video/*,application/pdf" onFilesSelect={handleFileSelect} existingFiles={formState.media || []} />
-                <Button onClick={eduCrud.handleCreateOrUpdate}>{isEditing ? 'Update' : 'Create'} Education Item</Button>
-            </div>
-        );
-      case 'advertisements':
-        return (
-            <div className="space-y-4">
-                <Input name="title" placeholder="Title" value={formState.title || ''} onChange={handleInputChange} />
-                <Textarea name="description" placeholder="Description" value={formState.description || ''} onChange={handleInputChange} />
-                <Input name="client" placeholder="Client" value={formState.client || ''} onChange={handleInputChange} />
-                <Input name="link" placeholder="Advertisement Link" value={formState.link || ''} onChange={handleInputChange} />
-                <Select name="type" value={formState.type || 'banner'} onValueChange={(value) => handleSelectChange('type', value)}>
-                  <SelectTrigger><SelectValue placeholder="Advertisement Type" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="banner">Banner</SelectItem>
-                    <SelectItem value="sidebar">Sidebar</SelectItem>
-                    <SelectItem value="inline">Inline</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Input name="startDate" type="date" placeholder="Start Date" value={formState.startDate || ''} onChange={handleInputChange} />
-                <Input name="endDate" type="date" placeholder="End Date" value={formState.endDate || ''} onChange={handleInputChange} />
-                <div className="flex items-center space-x-2">
-                  <input type="checkbox" name="isActive" id="adIsActive" checked={formState.isActive === undefined ? true : formState.isActive} onChange={(e) => setFormState({...formState, isActive: e.target.checked})} />
-                  <label htmlFor="adIsActive">Is Active</label>
-                </div>
-                <MediaUpload label="Media (Image or Video)" accept="image/*,video/*" onFilesSelect={handleFileSelect} existingFiles={formState.media || []} />
-                <Button onClick={adCrud.handleCreateOrUpdate}>{isEditing ? 'Update' : 'Create'} Advertisement</Button>
-            </div>
-        );
-      default:
-        return <p>Select a section to manage content.</p>;
-    }
+  const getSectionData = (section: string) => {
+    const dataMap: { [key: string]: { items: any[], crud: any } } = {
+      news: { items: newsItems, crud: newsCrud },
+      politics: { items: politicsItems, crud: politicsCrud },
+      business: { items: businessItems, crud: businessCrud },
+      tech: { items: techItems, crud: techCrud },
+      sports: { items: sportsItems, crud: sportsCrud },
+      employment: { items: employmentItems, crud: employmentCrud },
+      health: { items: healthItems, crud: healthCrud },
+      mystory: { items: mystoryItems, crud: mystoryCrud },
+      publications: { items: publications, crud: pubCrud },
+      teaching: { items: teachingItems, crud: teachingCrud },
+      youtube: { items: youtubeItems, crud: youtubeCrud },
+      agriculture: { items: agricultureItems, crud: agriCrud },
+      education: { items: educationItems, crud: eduCrud },
+      advertisements: { items: advertisements, crud: adCrud },
+      newsCrawl: { items: newsCrawlItems, crud: newsCrawlCrud },
+      adPackages: { items: adPackages, crud: adPackageCrud }
+    };
+    return dataMap[section] || { items: [], crud: {} };
   };
 
-  const renderList = (section: string) => {
-    let items: any[] = [];
-    let crud: any = {};
-    switch(section) {
-      case 'news': items = newsItems; crud = newsCrud; break;
-      case 'publications': items = publications; crud = pubCrud; break;
-      case 'teaching': items = teachingItems; crud = teachingCrud; break;
-      case 'youtube': items = youtubeItems; crud = youtubeCrud; break;
-      case 'agriculture': items = agricultureItems; crud = agriCrud; break;
-      case 'education': items = educationItems; crud = eduCrud; break;
-      case 'advertisements': items = advertisements; crud = adCrud; break;
-      case 'newsCrawl': items = newsCrawlItems; crud = newsCrawlCrud; break;
-      case 'adPackages': items = adPackages; crud = adPackageCrud; break;
-      default: return null;
-    }
-
-    return (
-      <div className="space-y-4">
-        {items.map((item) => (
-          <Card key={item.id}>
-            <CardContent className="p-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h4 className="font-bold">{item.title || item.name || item.text}</h4>
-                  <p className="text-sm text-gray-500">{item.description || item.excerpt || item.author || item.price}</p>
-                   {item.level && <Badge>{item.level}</Badge>}
-                   {item.popular && <Badge variant="destructive">Popular</Badge>}
-                   {item.isActive !== undefined && <Badge variant={item.isActive ? "default" : "secondary"}>{item.isActive ? "Active" : "Inactive"}</Badge>}
-                </div>
-                <div className="flex space-x-2">
-                  <Button variant="outline" size="sm" onClick={() => crud.handleEdit(item)}><Edit className="h-4 w-4" /></Button>
-                  <Button variant="destructive" size="sm" onClick={() => crud.handleDelete(item.id)}><Trash2 className="h-4 w-4" /></Button>
-                </div>
-              </div>
-               {item.engagement && (
-                <div className="mt-4">
-                    <EngagementTracker 
-                        itemId={item.id}
-                        itemType={section as any}
-                        engagement={item.engagement}
-                        onUpdateEngagement={(engagement) => crud.handleUpdateEngagement(item.id, engagement)}
-                        isAdmin
-                    />
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
-  };
-  
   const menuItems = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { id: "news", label: "News", icon: Newspaper },
+    { id: "news", label: "General News", icon: Newspaper },
+    { id: "politics", label: "Politics", icon: Users },
+    { id: "business", label: "Business", icon: Briefcase },
+    { id: "tech", label: "Tech", icon: Monitor },
+    { id: "sports", label: "Sports", icon: Trophy },
+    { id: "employment", label: "Employment", icon: Users },
+    { id: "health", label: "Health", icon: Heart },
+    { id: "mystory", label: "My Story", icon: User },
     { id: "newsCrawl", label: "Breaking News", icon: TrendingUp },
     { id: "adPackages", label: "Ad Packages", icon: Megaphone },
     { id: "publications", label: "Publications", icon: Book },
@@ -718,7 +527,7 @@ const AdminPage = () => {
                     <Newspaper className="h-8 w-8 text-blue-600" />
                     <div className="ml-4">
                       <p className="text-sm font-medium text-gray-600">Total Articles</p>
-                      <p className="text-2xl font-bold text-gray-900">{newsItems.length}</p>
+                      <p className="text-2xl font-bold text-gray-900">{newsItems.length + politicsItems.length + businessItems.length + techItems.length + sportsItems.length + employmentItems.length + healthItems.length + mystoryItems.length}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -771,13 +580,28 @@ const AdminPage = () => {
                   <h2 className="text-xl font-semibold mb-4">{isEditing ? 'Edit Item' : 'Create New Item'}</h2>
                   <Card>
                     <CardContent className="p-6">
-                      {renderForm(activeSection)}
+                      <AdminForm
+                        section={activeSection}
+                        formState={formState}
+                        isEditing={!!isEditing}
+                        onInputChange={handleInputChange}
+                        onSelectChange={handleSelectChange}
+                        onFileSelect={handleFileSelect}
+                        onSubmit={getSectionData(activeSection).crud.handleCreateOrUpdate}
+                        setFormState={setFormState}
+                      />
                     </CardContent>
                   </Card>
                 </div>
                 <div>
                   <h2 className="text-xl font-semibold mb-4">Existing Items</h2>
-                  {renderList(activeSection)}
+                  <AdminList
+                    section={activeSection}
+                    items={getSectionData(activeSection).items}
+                    onEdit={getSectionData(activeSection).crud.handleEdit}
+                    onDelete={getSectionData(activeSection).crud.handleDelete}
+                    onUpdateEngagement={getSectionData(activeSection).crud.handleUpdateEngagement}
+                  />
                 </div>
               </div>
             )}
