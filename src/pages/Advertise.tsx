@@ -3,48 +3,91 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Target, Users, TrendingUp, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "@/firebase";
+
+interface AdPackage {
+  id: string;
+  name: string;
+  price: string;
+  period: string;
+  features: string[];
+  popular: boolean;
+  isActive: boolean;
+}
 
 const Advertise = () => {
-  const packages = [
-    {
-      name: "Basic",
-      price: "$299",
-      period: "per month",
-      features: [
-        "Banner advertisements",
-        "Up to 10,000 impressions",
-        "Basic analytics",
-        "Email support"
-      ],
-      popular: false
-    },
-    {
-      name: "Professional",
-      price: "$599",
-      period: "per month",
-      features: [
-        "Banner + sidebar ads",
-        "Up to 50,000 impressions",
-        "Advanced analytics",
-        "Video ad support",
-        "Priority support"
-      ],
-      popular: true
-    },
-    {
-      name: "Enterprise",
-      price: "$1,299",
-      period: "per month",
-      features: [
-        "All ad placements",
-        "Unlimited impressions",
-        "Custom campaigns",
-        "Video + interactive ads",
-        "Dedicated account manager"
-      ],
-      popular: false
-    }
-  ];
+  const [packages, setPackages] = useState<AdPackage[]>([]);
+
+  useEffect(() => {
+    const fetchPackages = async () => {
+      try {
+        const q = query(
+          collection(db, 'adPackages'),
+          where('isActive', '==', true)
+        );
+        const querySnapshot = await getDocs(q);
+        const fetchedPackages = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as AdPackage[];
+        
+        setPackages(fetchedPackages);
+      } catch (error) {
+        console.error("Error fetching packages:", error);
+        // Fallback to dummy data
+        setPackages([
+          {
+            id: '1',
+            name: "Basic",
+            price: "$299",
+            period: "per month",
+            features: [
+              "Banner advertisements",
+              "Up to 10,000 impressions",
+              "Basic analytics",
+              "Email support"
+            ],
+            popular: false,
+            isActive: true
+          },
+          {
+            id: '2',
+            name: "Professional",
+            price: "$599",
+            period: "per month",
+            features: [
+              "Banner + sidebar ads",
+              "Up to 50,000 impressions",
+              "Advanced analytics",
+              "Video ad support",
+              "Priority support"
+            ],
+            popular: true,
+            isActive: true
+          },
+          {
+            id: '3',
+            name: "Enterprise",
+            price: "$1,299",
+            period: "per month",
+            features: [
+              "All ad placements",
+              "Unlimited impressions",
+              "Custom campaigns",
+              "Video + interactive ads",
+              "Dedicated account manager"
+            ],
+            popular: false,
+            isActive: true
+          }
+        ]);
+      }
+    };
+
+    fetchPackages();
+  }, []);
 
   const stats = [
     { icon: Users, value: "2.5M+", label: "Monthly Visitors" },
@@ -97,7 +140,7 @@ const Advertise = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {packages.map((pkg, index) => (
-              <div key={index} className={`bg-white rounded-2xl shadow-xl p-8 border-2 ${pkg.popular ? 'border-purple-500 relative' : 'border-purple-100'}`}>
+              <div key={pkg.id} className={`bg-white rounded-2xl shadow-xl p-8 border-2 ${pkg.popular ? 'border-purple-500 relative' : 'border-purple-100'}`}>
                 {pkg.popular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                     <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-full text-sm font-bold">

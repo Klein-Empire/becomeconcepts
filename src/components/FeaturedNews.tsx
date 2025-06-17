@@ -1,37 +1,93 @@
 
 import { Clock, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { collection, getDocs, query, where, orderBy, limit } from "firebase/firestore";
+import { db } from "@/firebase";
+
+interface Article {
+  id: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  media: Array<{ url: string; type: string }>;
+  date: string;
+  author: string;
+  featured: boolean;
+}
 
 const FeaturedNews = () => {
-  const featuredArticles = [
-    {
-      id: 2,
-      title: "Global Markets Show Strong Recovery Signs",
-      excerpt: "Financial analysts report positive trends across major exchanges as investor confidence returns.",
-      category: "Business",
-      image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=300&fit=crop",
-      time: "3 hours ago",
-      author: "Sarah Johnson"
-    },
-    {
-      id: 3,
-      title: "Climate Summit Reaches Historic Agreement",
-      excerpt: "World leaders unite on ambitious climate goals with concrete action plans for the next decade.",
-      category: "My Story",
-      image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=300&fit=crop",
-      time: "5 hours ago",
-      author: "Michael Chen"
-    },
-    {
-      id: 4,
-      title: "Revolutionary AI Tool Transforms Healthcare",
-      excerpt: "New artificial intelligence system shows promise in early disease detection and treatment planning.",
-      category: "Tech",
-      image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=300&fit=crop",
-      time: "6 hours ago",
-      author: "Dr. Emily Rodriguez"
-    }
-  ];
+  const [featuredArticles, setFeaturedArticles] = useState<Article[]>([]);
+
+  useEffect(() => {
+    const fetchFeaturedArticles = async () => {
+      try {
+        const q = query(
+          collection(db, 'news'),
+          where('status', '==', 'published'),
+          where('featured', '==', true),
+          orderBy('date', 'desc'),
+          limit(3)
+        );
+        const querySnapshot = await getDocs(q);
+        const fetchedArticles = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as Article[];
+        
+        setFeaturedArticles(fetchedArticles);
+      } catch (error) {
+        console.error("Error fetching featured articles:", error);
+        // Fallback to dummy data
+        setFeaturedArticles([
+          {
+            id: '2',
+            title: "Global Markets Show Strong Recovery Signs",
+            excerpt: "Financial analysts report positive trends across major exchanges as investor confidence returns.",
+            category: "Business",
+            media: [{ url: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=300&fit=crop", type: "image" }],
+            date: new Date().toISOString().split('T')[0],
+            author: "Sarah Johnson",
+            featured: true
+          },
+          {
+            id: '3',
+            title: "Climate Summit Reaches Historic Agreement",
+            excerpt: "World leaders unite on ambitious climate goals with concrete action plans for the next decade.",
+            category: "My Story",
+            media: [{ url: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=300&fit=crop", type: "image" }],
+            date: new Date().toISOString().split('T')[0],
+            author: "Michael Chen",
+            featured: true
+          },
+          {
+            id: '4',
+            title: "Revolutionary AI Tool Transforms Healthcare",
+            excerpt: "New artificial intelligence system shows promise in early disease detection and treatment planning.",
+            category: "Tech",
+            media: [{ url: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=300&fit=crop", type: "image" }],
+            date: new Date().toISOString().split('T')[0],
+            author: "Dr. Emily Rodriguez",
+            featured: true
+          }
+        ]);
+      }
+    };
+
+    fetchFeaturedArticles();
+  }, []);
+
+  const getTimeAgo = (date: string) => {
+    const now = new Date();
+    const articleDate = new Date(date);
+    const diffTime = Math.abs(now.getTime() - articleDate.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 1) return '1 day ago';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+    return `${Math.floor(diffDays / 30)} months ago`;
+  };
 
   return (
     <section className="py-16 bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
@@ -55,7 +111,7 @@ const FeaturedNews = () => {
               <article className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden transform hover:-translate-y-2">
                 <div className="relative overflow-hidden">
                   <img
-                    src={article.image}
+                    src={article.media?.[0]?.url || "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=300&fit=crop"}
                     alt={article.title}
                     className="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-500"
                   />
@@ -68,7 +124,7 @@ const FeaturedNews = () => {
                     </span>
                     <div className="flex items-center text-gray-500 text-sm">
                       <Clock className="h-4 w-4 mr-1" />
-                      {article.time}
+                      {getTimeAgo(article.date)}
                     </div>
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-indigo-600 transition-colors duration-300 line-clamp-2">

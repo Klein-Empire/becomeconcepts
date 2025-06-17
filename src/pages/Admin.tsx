@@ -107,8 +107,11 @@ interface Advertisement {
   description: string;
   media: MediaFile[];
   client: string;
+  link: string;
+  type: 'banner' | 'sidebar' | 'inline';
   startDate: string;
   endDate: string;
+  isActive: boolean;
   engagement: EngagementData;
 }
 
@@ -122,6 +125,23 @@ interface YoutubeItem {
   engagement: EngagementData;
 }
 
+interface NewsCrawlItem {
+  id: string;
+  text: string;
+  image: string;
+  isActive: boolean;
+  order: number;
+}
+
+interface AdPackage {
+  id: string;
+  name: string;
+  price: string;
+  period: string;
+  features: string[];
+  popular: boolean;
+  isActive: boolean;
+}
 
 const AdminPage = () => {
   const [activeSection, setActiveSection] = useState("dashboard");
@@ -180,7 +200,7 @@ const AdminPage = () => {
   ];
 
   const dummyAdvertisements: Advertisement[] = [
-    { id: '1', title: 'Harvest Season Sale', description: 'Get the best deals on farming equipment.', media: [], client: 'AgriCorp', startDate: '2025-07-01', endDate: '2025-07-31', engagement: createDummyEngagement() },
+    { id: '1', title: 'Harvest Season Sale', description: 'Get the best deals on farming equipment.', media: [], client: 'AgriCorp', link: '', type: 'banner', startDate: '2025-07-01', endDate: '2025-07-31', isActive: true, engagement: createDummyEngagement() },
   ];
 
   // --- State Management (initialized as empty arrays) ---
@@ -191,6 +211,8 @@ const AdminPage = () => {
   const [agricultureItems, setAgricultureItems] = useState<AgriculturalItem[]>([]);
   const [educationItems, setEducationItems] = useState<EducationItem[]>([]);
   const [advertisements, setAdvertisements] = useState<Advertisement[]>([]);
+  const [newsCrawlItems, setNewsCrawlItems] = useState<NewsCrawlItem[]>([]);
+  const [adPackages, setAdPackages] = useState<AdPackage[]>([]);
 
   // --- Form State ---
   const [formState, setFormState] = useState<any>({});
@@ -214,6 +236,8 @@ const AdminPage = () => {
         setAgricultureItems(await fetchCollection('agriculture') as AgriculturalItem[]);
         setEducationItems(await fetchCollection('education') as EducationItem[]);
         setAdvertisements(await fetchCollection('advertisements') as Advertisement[]);
+        setNewsCrawlItems(await fetchCollection('newsCrawl') as NewsCrawlItem[]);
+        setAdPackages(await fetchCollection('adPackages') as AdPackage[]);
 
       } catch (error) {
         console.error("Failed to load data from Firestore:", error);
@@ -264,7 +288,9 @@ const AdminPage = () => {
         youtube: 'youtube',
         agriculture: 'agriculture',
         education: 'education',
-        advertisements: 'advertisements'
+        advertisements: 'advertisements',
+        newsCrawl: 'newsCrawl',
+        adPackages: 'adPackages'
     };
     const collectionName = collectionNameMap[itemType];
 
@@ -272,8 +298,9 @@ const AdminPage = () => {
       if (!collectionName) return;
 
       const tags = typeof formState.tags === 'string' ? formState.tags.split(',').map((t: string) => t.trim()) : formState.tags || [];
+      const features = typeof formState.features === 'string' ? formState.features.split(',').map((f: string) => f.trim()) : formState.features || [];
       
-      const dataToSave: any = { ...formState, tags };
+      const dataToSave: any = { ...formState, tags, features };
       delete dataToSave.id; // Don't save ID in the document data
 
       if (itemType === 'youtube') {
@@ -283,6 +310,10 @@ const AdminPage = () => {
           } else {
               delete dataToSave.thumbnail;
           }
+          delete dataToSave.media;
+      } else if (itemType === 'newsCrawl') {
+          delete dataToSave.media;
+      } else if (itemType === 'adPackages') {
           delete dataToSave.media;
       } else {
           const mediaToStore = (formState.media || []).map((mf: MediaFile) => ({
@@ -307,8 +338,11 @@ const AdminPage = () => {
         setItems(items.map(item => item.id === isEditing ? { ...originalItem, ...dataToSave } : item));
       } else {
         // Create
-        const docRef = await addDoc(collection(db, collectionName), { ...dataToSave, engagement: createDummyEngagement() });
-        setItems([...items, { ...dataToSave, id: docRef.id, engagement: createDummyEngagement() }]);
+        if (!['newsCrawl', 'adPackages'].includes(itemType)) {
+          dataToSave.engagement = createDummyEngagement();
+        }
+        const docRef = await addDoc(collection(db, collectionName), dataToSave);
+        setItems([...items, { ...dataToSave, id: docRef.id }]);
       }
       setFormState({});
       setIsEditing(null);
@@ -316,7 +350,11 @@ const AdminPage = () => {
 
     const handleEdit = (item: any) => {
       setIsEditing(item.id);
-      const stateToSet: any = { ...item, tags: item.tags?.join(', ') || '' };
+      const stateToSet: any = { 
+        ...item, 
+        tags: item.tags?.join(', ') || '',
+        features: item.features?.join(', ') || ''
+      };
       if (itemType === 'youtube' && item.thumbnail) {
           stateToSet.media = [{
               id: 'thumb-' + item.id,
@@ -338,7 +376,7 @@ const AdminPage = () => {
     };
     
     const handleUpdateEngagement = async (itemId: string, engagement: EngagementData) => {
-        if (!collectionName) return;
+        if (!collectionName || ['newsCrawl', 'adPackages'].includes(itemType)) return;
         const itemRef = doc(db, collectionName, itemId);
         await updateDoc(itemRef, { engagement });
         setItems(items.map(item => item.id === itemId ? { ...item, engagement } : item));
@@ -354,6 +392,8 @@ const AdminPage = () => {
   const agriCrud = getCrudHandlers(agricultureItems, setAgricultureItems, 'agriculture');
   const eduCrud = getCrudHandlers(educationItems, setEducationItems, 'education');
   const adCrud = getCrudHandlers(advertisements, setAdvertisements, 'advertisements');
+  const newsCrawlCrud = getCrudHandlers(newsCrawlItems, setNewsCrawlItems, 'newsCrawl');
+  const adPackageCrud = getCrudHandlers(adPackages, setAdPackages, 'adPackages');
 
 
   const renderForm = (section: string) => {
@@ -404,6 +444,39 @@ const AdminPage = () => {
             </div>
             <MediaUpload label="Media" accept="image/*,video/*,application/pdf" onFilesSelect={handleFileSelect} existingFiles={formState.media || []} />
             <Button onClick={newsCrud.handleCreateOrUpdate}>{isEditing ? 'Update' : 'Create'} News Article</Button>
+          </div>
+        );
+      case 'newsCrawl':
+        return (
+          <div className="space-y-4">
+            <Input name="text" placeholder="Breaking news text" value={formState.text || ''} onChange={handleInputChange} />
+            <Input name="image" placeholder="Image URL" value={formState.image || ''} onChange={handleInputChange} />
+            <Input name="order" type="number" placeholder="Display order" value={formState.order || ''} onChange={handleInputChange} />
+            <div className="flex items-center space-x-2">
+              <input type="checkbox" name="isActive" id="crawlActive" checked={formState.isActive === undefined ? true : formState.isActive} onChange={(e) => setFormState({...formState, isActive: e.target.checked})} />
+              <label htmlFor="crawlActive">Is Active</label>
+            </div>
+            <Button onClick={newsCrawlCrud.handleCreateOrUpdate}>{isEditing ? 'Update' : 'Create'} Breaking News</Button>
+          </div>
+        );
+      case 'adPackages':
+        return (
+          <div className="space-y-4">
+            <Input name="name" placeholder="Package Name" value={formState.name || ''} onChange={handleInputChange} />
+            <Input name="price" placeholder="Price (e.g., $299)" value={formState.price || ''} onChange={handleInputChange} />
+            <Input name="period" placeholder="Period (e.g., per month)" value={formState.period || ''} onChange={handleInputChange} />
+            <Textarea name="features" placeholder="Features (comma-separated)" value={formState.features || ''} onChange={handleInputChange} />
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <input type="checkbox" name="popular" id="popular" checked={formState.popular || false} onChange={(e) => setFormState({...formState, popular: e.target.checked})} />
+                <label htmlFor="popular">Popular Package</label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <input type="checkbox" name="isActive" id="packageActive" checked={formState.isActive === undefined ? true : formState.isActive} onChange={(e) => setFormState({...formState, isActive: e.target.checked})} />
+                <label htmlFor="packageActive">Is Active</label>
+              </div>
+            </div>
+            <Button onClick={adPackageCrud.handleCreateOrUpdate}>{isEditing ? 'Update' : 'Create'} Package</Button>
           </div>
         );
       case 'publications':
@@ -527,6 +600,8 @@ const AdminPage = () => {
       case 'agriculture': items = agricultureItems; crud = agriCrud; break;
       case 'education': items = educationItems; crud = eduCrud; break;
       case 'advertisements': items = advertisements; crud = adCrud; break;
+      case 'newsCrawl': items = newsCrawlItems; crud = newsCrawlCrud; break;
+      case 'adPackages': items = adPackages; crud = adPackageCrud; break;
       default: return null;
     }
 
@@ -537,9 +612,11 @@ const AdminPage = () => {
             <CardContent className="p-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <h4 className="font-bold">{item.title}</h4>
-                  <p className="text-sm text-gray-500">{item.description || item.excerpt || item.author}</p>
+                  <h4 className="font-bold">{item.title || item.name || item.text}</h4>
+                  <p className="text-sm text-gray-500">{item.description || item.excerpt || item.author || item.price}</p>
                    {item.level && <Badge>{item.level}</Badge>}
+                   {item.popular && <Badge variant="destructive">Popular</Badge>}
+                   {item.isActive !== undefined && <Badge variant={item.isActive ? "default" : "secondary"}>{item.isActive ? "Active" : "Inactive"}</Badge>}
                 </div>
                 <div className="flex space-x-2">
                   <Button variant="outline" size="sm" onClick={() => crud.handleEdit(item)}><Edit className="h-4 w-4" /></Button>
@@ -567,6 +644,8 @@ const AdminPage = () => {
   const menuItems = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
     { id: "news", label: "News", icon: Newspaper },
+    { id: "newsCrawl", label: "Breaking News", icon: TrendingUp },
+    { id: "adPackages", label: "Ad Packages", icon: Megaphone },
     { id: "publications", label: "Publications", icon: Book },
     { id: "teaching", label: "Teaching", icon: GraduationCap },
     { id: "youtube", label: "YouTube", icon: Youtube },

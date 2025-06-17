@@ -2,41 +2,92 @@
 import { TrendingUp, Mail, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { collection, getDocs, query, where, orderBy, limit } from "firebase/firestore";
+import { db } from "@/firebase";
 import BecomeTVSection from "./BecomeTVSection";
+import Advertisement from "./Advertisement";
+
+interface TrendingStory {
+  id: string;
+  title: string;
+  category: string;
+  date: string;
+}
 
 const Sidebar = () => {
-  const trendingStories = [
-    {
-      id: 11,
-      title: "Breaking: Major Policy Changes Announced",
-      category: "Politics",
-      time: "30 min ago"
-    },
-    {
-      id: 12,
-      title: "Tech Giant Reports Record Profits",
-      category: "Business",
-      time: "1 hour ago"
-    },
-    {
-      id: 13,
-      title: "Celebrity Wedding Shocks Fans",
-      category: "Entertainment",
-      time: "2 hours ago"
-    },
-    {
-      id: 14,
-      title: "Scientific Breakthrough in Medicine",
-      category: "Health",
-      time: "3 hours ago"
-    },
-    {
-      id: 15,
-      title: "Championship Team Wins Title",
-      category: "Sports",
-      time: "4 hours ago"
-    }
-  ];
+  const [trendingStories, setTrendingStories] = useState<TrendingStory[]>([]);
+
+  useEffect(() => {
+    const fetchTrendingStories = async () => {
+      try {
+        const q = query(
+          collection(db, 'news'),
+          where('status', '==', 'published'),
+          orderBy('date', 'desc'),
+          limit(5)
+        );
+        const querySnapshot = await getDocs(q);
+        const fetchedStories = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          title: doc.data().title,
+          category: doc.data().category,
+          date: doc.data().date
+        })) as TrendingStory[];
+        
+        setTrendingStories(fetchedStories);
+      } catch (error) {
+        console.error("Error fetching trending stories:", error);
+        // Fallback to dummy data
+        setTrendingStories([
+          {
+            id: '11',
+            title: "Breaking: Major Policy Changes Announced",
+            category: "Politics",
+            date: new Date().toISOString().split('T')[0]
+          },
+          {
+            id: '12',
+            title: "Tech Giant Reports Record Profits",
+            category: "Business",
+            date: new Date().toISOString().split('T')[0]
+          },
+          {
+            id: '13',
+            title: "Celebrity Wedding Shocks Fans",
+            category: "Employment",
+            date: new Date().toISOString().split('T')[0]
+          },
+          {
+            id: '14',
+            title: "Scientific Breakthrough in Medicine",
+            category: "Health",
+            date: new Date().toISOString().split('T')[0]
+          },
+          {
+            id: '15',
+            title: "Championship Team Wins Title",
+            category: "Sports",
+            date: new Date().toISOString().split('T')[0]
+          }
+        ]);
+      }
+    };
+
+    fetchTrendingStories();
+  }, []);
+
+  const getTimeAgo = (date: string) => {
+    const now = new Date();
+    const articleDate = new Date(date);
+    const diffTime = Math.abs(now.getTime() - articleDate.getTime());
+    const diffHours = Math.ceil(diffTime / (1000 * 60 * 60));
+    
+    if (diffHours < 1) return '30 min ago';
+    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+    const diffDays = Math.ceil(diffHours / 24);
+    return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+  };
 
   const quickLinks = ["Weather", "Stock Market", "Election Updates", "COVID-19 Updates", "Opinion"];
 
@@ -64,7 +115,7 @@ const Sidebar = () => {
                       <span className="hover:text-blue-600">{story.category}</span>
                     </Link>
                     <span>•</span>
-                    <span>{story.time}</span>
+                    <span>{getTimeAgo(story.date)}</span>
                   </div>
                 </div>
               </div>
@@ -100,14 +151,8 @@ const Sidebar = () => {
         </p>
       </div>
 
-      {/* Advertisement Space */}
-      <div className="bg-slate-100 rounded-lg p-6 text-center">
-        <p className="text-slate-500 text-sm mb-3">Advertisement</p>
-        <div className="bg-white border-2 border-dashed border-slate-300 rounded-lg p-8">
-          <p className="text-slate-400 text-sm">Ad Space Available</p>
-          <p className="text-slate-400 text-xs mt-1">300x250</p>
-        </div>
-      </div>
+      {/* Sidebar Advertisement */}
+      <Advertisement type="sidebar" />
 
       {/* Quick Links */}
       <div className="bg-white rounded-lg shadow-md p-6">

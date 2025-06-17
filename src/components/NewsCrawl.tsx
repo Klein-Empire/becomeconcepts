@@ -1,32 +1,59 @@
 
 import { useState, useEffect } from "react";
+import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
+import { db } from "@/firebase";
+
+interface NewsCrawlItem {
+  id: string;
+  text: string;
+  image: string;
+  isActive: boolean;
+  order: number;
+}
 
 const NewsCrawl = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  
-  // In a real app, this would come from a global state management system or API
-  const [crawlNews] = useState([
-    {
-      text: "Stock markets hit record highs as tech sector surges 15%",
-      image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=50&h=50&fit=crop&crop=face"
-    },
-    {
-      text: "Breaking: International climate agreement signed by 50 nations",
-      image: "https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=50&h=50&fit=crop&crop=face"
-    },
-    {
-      text: "Scientists discover breakthrough cancer treatment with 95% success rate",
-      image: "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=50&h=50&fit=crop&crop=face"
-    },
-    {
-      text: "Global supply chain issues show signs of improvement in Q4",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face"
-    },
-    {
-      text: "Revolutionary AI technology promises to transform healthcare industry",
-      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=50&h=50&fit=crop&crop=face"
-    }
-  ]);
+  const [crawlNews, setCrawlNews] = useState<NewsCrawlItem[]>([]);
+
+  useEffect(() => {
+    const fetchCrawlNews = async () => {
+      try {
+        const q = query(
+          collection(db, 'newsCrawl'),
+          where('isActive', '==', true),
+          orderBy('order', 'asc')
+        );
+        const querySnapshot = await getDocs(q);
+        const fetchedNews = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as NewsCrawlItem[];
+        
+        setCrawlNews(fetchedNews);
+      } catch (error) {
+        console.error("Error fetching news crawl:", error);
+        // Fallback to dummy data
+        setCrawlNews([
+          {
+            id: '1',
+            text: "Stock markets hit record highs as tech sector surges 15%",
+            image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=50&h=50&fit=crop&crop=face",
+            isActive: true,
+            order: 1
+          },
+          {
+            id: '2',
+            text: "Breaking: International climate agreement signed by 50 nations",
+            image: "https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=50&h=50&fit=crop&crop=face",
+            isActive: true,
+            order: 2
+          }
+        ]);
+      }
+    };
+
+    fetchCrawlNews();
+  }, []);
 
   useEffect(() => {
     if (crawlNews.length === 0) return;
@@ -55,7 +82,7 @@ const NewsCrawl = () => {
               style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
               {crawlNews.map((news, index) => (
-                <div key={index} className="w-full flex-shrink-0 flex items-center space-x-3">
+                <div key={news.id} className="w-full flex-shrink-0 flex items-center space-x-3">
                   <img
                     src={news.image}
                     alt="News"
