@@ -1,9 +1,11 @@
 
 import { useState, useEffect } from "react";
 import { X, ExternalLink } from "lucide-react";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "@/firebase";
 
 interface Ad {
-  id: number;
+  id: string;
   title: string;
   description: string;
   image?: string;
@@ -19,38 +21,43 @@ interface AdvertisementProps {
 }
 
 const Advertisement = ({ type, className = "" }: AdvertisementProps) => {
-  const [ads, setAds] = useState<Ad[]>([
-    {
-      id: 1,
-      title: "Professional Web Development",
-      description: "Build your dream website with our expert team",
-      image: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=200&fit=crop",
-      link: "https://example.com",
-      type: 'banner',
-      isActive: true
-    },
-    {
-      id: 2,
-      title: "Learn Digital Marketing",
-      description: "Master the art of digital marketing",
-      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=300&h=250&fit=crop",
-      link: "https://example.com",
-      type: 'sidebar',
-      isActive: true
-    },
-    {
-      id: 3,
-      title: "Investment Opportunities",
-      description: "Grow your wealth with smart investments",
-      image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=300&fit=crop",
-      link: "https://example.com",
-      type: 'inline',
-      isActive: true
-    }
-  ]);
-
+  const [ads, setAds] = useState<Ad[]>([]);
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    const fetchAds = async () => {
+      try {
+        const q = query(
+          collection(db, 'advertisements'),
+          where('type', '==', type),
+          where('isActive', '==', true)
+        );
+        const querySnapshot = await getDocs(q);
+        const fetchedAds = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as Ad[];
+        setAds(fetchedAds);
+      } catch (error) {
+        console.error("Error fetching ads:", error);
+        // Fallback to dummy data if Firestore fails
+        setAds([
+          {
+            id: '1',
+            title: "Professional Web Development",
+            description: "Build your dream website with our expert team",
+            image: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=200&fit=crop",
+            link: "https://example.com",
+            type: type,
+            isActive: true
+          }
+        ]);
+      }
+    };
+
+    fetchAds();
+  }, [type]);
 
   const filteredAds = ads.filter(ad => ad.type === type && ad.isActive);
 

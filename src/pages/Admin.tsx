@@ -357,7 +357,6 @@ const AdminPage = () => {
 
 
   const renderForm = (section: string) => {
-    // This is a simplified form renderer. You can expand it.
     switch(section) {
       case 'news':
         return (
@@ -367,7 +366,20 @@ const AdminPage = () => {
             <Input name="excerpt" placeholder="Excerpt" value={formState.excerpt || ''} onChange={handleInputChange} />
             <Input name="author" placeholder="Author" value={formState.author || ''} onChange={handleInputChange} />
             <Input name="date" type="date" placeholder="Date" value={formState.date || ''} onChange={handleInputChange} />
-            <Input name="category" placeholder="Category" value={formState.category || ''} onChange={handleInputChange} />
+            <Select name="category" value={formState.category || ''} onValueChange={(value) => handleSelectChange('category', value)}>
+              <SelectTrigger><SelectValue placeholder="Select Category" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Politics">Politics</SelectItem>
+                <SelectItem value="Business">Business</SelectItem>
+                <SelectItem value="Tech">Tech</SelectItem>
+                <SelectItem value="Sports">Sports</SelectItem>
+                <SelectItem value="Employment">Employment</SelectItem>
+                <SelectItem value="Health">Health</SelectItem>
+                <SelectItem value="My Story">My Story</SelectItem>
+                <SelectItem value="Agricultural">Agricultural</SelectItem>
+                <SelectItem value="Education">Education</SelectItem>
+              </SelectContent>
+            </Select>
             <Input name="tags" placeholder="Tags (comma-separated)" value={formState.tags || ''} onChange={handleInputChange} />
             <Select name="status" value={formState.status || 'draft'} onValueChange={(value) => handleSelectChange('status', value)}>
               <SelectTrigger><SelectValue placeholder="Status" /></SelectTrigger>
@@ -376,8 +388,22 @@ const AdminPage = () => {
                 <SelectItem value="published">Published</SelectItem>
               </SelectContent>
             </Select>
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <input type="checkbox" name="featured" id="featured" checked={formState.featured || false} onChange={(e) => setFormState({...formState, featured: e.target.checked})} />
+                <label htmlFor="featured">Featured Article</label>
+              </div>
+              <Select name="priority" value={formState.priority || 'medium'} onValueChange={(value) => handleSelectChange('priority', value)}>
+                <SelectTrigger className="w-32"><SelectValue placeholder="Priority" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <MediaUpload label="Media" accept="image/*,video/*,application/pdf" onFilesSelect={handleFileSelect} existingFiles={formState.media || []} />
-            <Button onClick={newsCrud.handleCreateOrUpdate}>{isEditing ? 'Update' : 'Create'} News</Button>
+            <Button onClick={newsCrud.handleCreateOrUpdate}>{isEditing ? 'Update' : 'Create'} News Article</Button>
           </div>
         );
       case 'publications':
@@ -466,9 +492,22 @@ const AdminPage = () => {
                 <Input name="title" placeholder="Title" value={formState.title || ''} onChange={handleInputChange} />
                 <Textarea name="description" placeholder="Description" value={formState.description || ''} onChange={handleInputChange} />
                 <Input name="client" placeholder="Client" value={formState.client || ''} onChange={handleInputChange} />
+                <Input name="link" placeholder="Advertisement Link" value={formState.link || ''} onChange={handleInputChange} />
+                <Select name="type" value={formState.type || 'banner'} onValueChange={(value) => handleSelectChange('type', value)}>
+                  <SelectTrigger><SelectValue placeholder="Advertisement Type" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="banner">Banner</SelectItem>
+                    <SelectItem value="sidebar">Sidebar</SelectItem>
+                    <SelectItem value="inline">Inline</SelectItem>
+                  </SelectContent>
+                </Select>
                 <Input name="startDate" type="date" placeholder="Start Date" value={formState.startDate || ''} onChange={handleInputChange} />
                 <Input name="endDate" type="date" placeholder="End Date" value={formState.endDate || ''} onChange={handleInputChange} />
-                <MediaUpload label="Media" accept="image/*,video/*,application/pdf" onFilesSelect={handleFileSelect} existingFiles={formState.media || []} />
+                <div className="flex items-center space-x-2">
+                  <input type="checkbox" name="isActive" id="adIsActive" checked={formState.isActive === undefined ? true : formState.isActive} onChange={(e) => setFormState({...formState, isActive: e.target.checked})} />
+                  <label htmlFor="adIsActive">Is Active</label>
+                </div>
+                <MediaUpload label="Media (Image or Video)" accept="image/*,video/*" onFilesSelect={handleFileSelect} existingFiles={formState.media || []} />
                 <Button onClick={adCrud.handleCreateOrUpdate}>{isEditing ? 'Update' : 'Create'} Advertisement</Button>
             </div>
         );
@@ -593,7 +632,50 @@ const AdminPage = () => {
           <div>
             <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {/* Stat cards can go here */}
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center">
+                    <Newspaper className="h-8 w-8 text-blue-600" />
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-600">Total Articles</p>
+                      <p className="text-2xl font-bold text-gray-900">{newsItems.length}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center">
+                    <Megaphone className="h-8 w-8 text-green-600" />
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-600">Active Ads</p>
+                      <p className="text-2xl font-bold text-gray-900">{advertisements.filter(ad => ad.isActive).length}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center">
+                    <Book className="h-8 w-8 text-purple-600" />
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-600">Publications</p>
+                      <p className="text-2xl font-bold text-gray-900">{publications.length}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center">
+                    <Youtube className="h-8 w-8 text-red-600" />
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-600">Videos</p>
+                      <p className="text-2xl font-bold text-gray-900">{youtubeItems.filter(video => video.isActive).length}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         )}
